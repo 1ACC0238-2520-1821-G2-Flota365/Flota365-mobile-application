@@ -1,9 +1,10 @@
 package pe.edu.upc.flota365.presentation.ui.conductor
 
+import pe.edu.upc.flota365.presentation.ui.conductor.components.FormTextField
+import pe.edu.upc.flota365.presentation.ui.conductor.components.CheckboxItem
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pe.edu.upc.flota365.ui.theme.Flota365_App_mobileTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -147,59 +149,14 @@ fun ConductorCheckInScreen(
     }
 }
 
-@Composable
-fun FormTextField(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    singleLine: Boolean = true
-) {
-    Column(modifier) {
-        Text(text = label, fontSize = 14.sp, color = Color.Gray)
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            singleLine = singleLine,
-            shape = RoundedCornerShape(8.dp),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                focusedIndicatorColor = Color(0xFF00BCD4),
-            )
-        )
-    }
-}
-
-@Composable
-fun CheckboxItem(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-    ) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            colors = CheckboxDefaults.colors(
-                checkedColor = Color(0xFF00BCD4),
-                uncheckedColor = Color.Gray
-            )
-        )
-        Text(text = label, modifier = Modifier.padding(start = 8.dp))
-    }
-}
-
 @Preview(showBackground = true, showSystemUi = true, name="Check In Screen")
 @Composable
 fun ConductorCheckInScreenPreview() {
-    ConductorCheckInScreen(
-        onMenuClick = {},
-        onCancel = {},
-        onStartJourney = {}
-    )
+    Flota365_App_mobileTheme {
+        ConductorCheckInScreen(
+            onMenuClick = {},
+            onCancel = {},
+            onStartJourney = {}
+        )
+    }
 }

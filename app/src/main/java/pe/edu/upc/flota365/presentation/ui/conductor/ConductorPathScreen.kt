@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pe.edu.upc.flota365.ui.theme.Flota365_App_mobileTheme
 
 data class Ruta(
     val id: Int,
@@ -198,8 +199,10 @@ fun RutaItem(
 @Preview(showBackground = true, showSystemUi = true, name="Conductor Path")
 @Composable
 fun ConductorPathScreenPreview() {
-    ConductorPathScreen(
-        onMenuClick = {},
-        rutas = sampleRutas
-    )
+    Flota365_App_mobileTheme {
+        ConductorPathScreen(
+            onMenuClick = {},
+            rutas = sampleRutas
+        )
+    }
 }

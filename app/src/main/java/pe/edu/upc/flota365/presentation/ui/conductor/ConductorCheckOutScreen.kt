@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pe.edu.upc.flota365.ui.theme.Flota365_App_mobileTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -151,9 +152,11 @@ fun ConductorCheckOutScreen(
 @Preview(showBackground = true, showSystemUi = true, name="Check In Screen")
 @Composable
 fun ConductorCheckOutScreenPreview() {
-    ConductorCheckOutScreen(
-        onMenuClick = {},
-        onCancel = {},
-        onFinishJourney = {}
-    )
+    Flota365_App_mobileTheme {
+        ConductorCheckOutScreen(
+            onMenuClick = {},
+            onCancel = {},
+            onFinishJourney = {}
+        )
+    }
 }
