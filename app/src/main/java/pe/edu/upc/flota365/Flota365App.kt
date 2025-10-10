@@ -1,4 +1,7 @@
 package pe.edu.upc.flota365
 
-class Flota365App {
-}
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
+
+@HiltAndroidApp
+class Flota365App : Application()
