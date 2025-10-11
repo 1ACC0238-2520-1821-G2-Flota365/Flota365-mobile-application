@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Surface
+import androidx.navigation.NavGraph
 import dagger.hilt.android.AndroidEntryPoint
+import pe.edu.upc.flota365.presentation.navigation.AppNavHost
 import pe.edu.upc.flota365.presentation.navigation.FleetNavGraph
 import pe.edu.upc.flota365.ui.theme.FlotaTheme
 
@@ -14,7 +16,7 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     setContent {
       FlotaTheme {
-        Surface { FleetNavGraph() }
+        Surface { AppNavHost() }
       }
     }
   }
