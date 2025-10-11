@@ -16,27 +16,27 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun FormTextField(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    singleLine: Boolean = true
+  label: String,
+  value: String,
+  onValueChange: (String) -> Unit,
+  modifier: Modifier = Modifier,
+  keyboardType: KeyboardType = KeyboardType.Text,
+  singleLine: Boolean = true
 ) {
-    Column(modifier) {
-        Text(text = label, fontSize = 14.sp, color = Color.Gray)
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            singleLine = singleLine,
-            shape = RoundedCornerShape(8.dp),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                focusedIndicatorColor = Color(0xFF00BCD4),
-            )
-        )
-    }
+  Column(modifier) {
+    Text(text = label, fontSize = 14.sp, color = Color.Gray)
+    OutlinedTextField(
+      value = value,
+      onValueChange = onValueChange,
+      modifier = Modifier.fillMaxWidth(),
+      keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+      singleLine = singleLine,
+      shape = RoundedCornerShape(8.dp),
+      colors = TextFieldDefaults.colors(
+        focusedContainerColor = Color.White,
+        unfocusedContainerColor = Color.White,
+        focusedIndicatorColor = Color(0xFF00BCD4),
+      )
+    )
+  }
 }

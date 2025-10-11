@@ -20,75 +20,75 @@ import androidx.compose.ui.unit.dp
 import pe.edu.upc.flota365.presentation.ui.login.FlotaPrimaryButton
 import pe.edu.upc.flota365.presentation.ui.login.ScaffoldContainer
 import androidx.compose.ui.tooling.preview.Preview
-import pe.edu.upc.flota365.ui.theme.Flota365_App_mobileTheme
+import pe.edu.upc.flota365.ui.theme.FlotaTheme
 
 @Composable
 fun ManagerRegistrationScreen(
-    onBack: () -> Unit,
-    onContinue: () -> Unit
+  onBack: () -> Unit,
+  onContinue: () -> Unit
 ) {
-    ScaffoldContainer(onBack = onBack, title = "Registro - Gestor") {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    text = "Ingresa la información de tu empresa",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+  ScaffoldContainer(onBack = onBack, title = "Registro - Gestor") {
+    Column(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(horizontal = 24.dp),
+      verticalArrangement = Arrangement.SpaceBetween
+    ) {
+      Column {
+        Text(
+          text = "Ingresa la información de tu empresa",
+          style = MaterialTheme.typography.titleMedium,
+          modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-                var firstName by rememberSaveable { mutableStateOf("") }
-                var lastName by rememberSaveable { mutableStateOf("") }
-                var ruc by rememberSaveable { mutableStateOf("") }
-                var businessName by rememberSaveable { mutableStateOf("") }
-                var email by rememberSaveable { mutableStateOf("") }
-                var phone by rememberSaveable { mutableStateOf("") }
+        var firstName by rememberSaveable { mutableStateOf("") }
+        var lastName by rememberSaveable { mutableStateOf("") }
+        var ruc by rememberSaveable { mutableStateOf("") }
+        var businessName by rememberSaveable { mutableStateOf("") }
+        var email by rememberSaveable { mutableStateOf("") }
+        var phone by rememberSaveable { mutableStateOf("") }
 
-                ManagerTextField(value = firstName, onValueChange = { firstName = it }, label = "Nombres")
-                ManagerTextField(value = lastName, onValueChange = { lastName = it }, label = "Apellidos")
-                ManagerTextField(value = ruc, onValueChange = { ruc = it }, label = "Número de RUC")
-                ManagerTextField(value = businessName, onValueChange = { businessName = it }, label = "Razón social")
-                ManagerTextField(value = email, onValueChange = { email = it }, label = "Correo electrónico")
-                ManagerTextField(value = phone, onValueChange = { phone = it }, label = "Teléfono de contacto")
-            }
+        ManagerTextField(value = firstName, onValueChange = { firstName = it }, label = "Nombres")
+        ManagerTextField(value = lastName, onValueChange = { lastName = it }, label = "Apellidos")
+        ManagerTextField(value = ruc, onValueChange = { ruc = it }, label = "Número de RUC")
+        ManagerTextField(value = businessName, onValueChange = { businessName = it }, label = "Razón social")
+        ManagerTextField(value = email, onValueChange = { email = it }, label = "Correo electrónico")
+        ManagerTextField(value = phone, onValueChange = { phone = it }, label = "Teléfono de contacto")
+      }
 
-            FlotaPrimaryButton(
-                text = "Continuar",
-                onClick = onContinue,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+      FlotaPrimaryButton(
+        text = "Continuar",
+        onClick = onContinue,
+        modifier = Modifier.fillMaxWidth()
+      )
     }
+  }
 }
 
 @Composable
 private fun ManagerTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String
+  value: String,
+  onValueChange: (String) -> Unit,
+  label: String
 ) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp),
-        shape = RoundedCornerShape(16.dp)
-    )
+  OutlinedTextField(
+    value = value,
+    onValueChange = onValueChange,
+    label = { Text(label) },
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(bottom = 16.dp),
+    shape = RoundedCornerShape(16.dp)
+  )
 }
 
 @Preview(showBackground = true, showSystemUi = true, name = "Manager Registration Screen")
 @Composable
 fun PreviewManagerRegistrationScreen() {
-    Flota365_App_mobileTheme {
-        ManagerRegistrationScreen(
-            onBack = {},
-            onContinue = {}
-        )
-    }
+  FlotaTheme {
+    ManagerRegistrationScreen(
+      onBack = {},
+      onContinue = {}
+    )
+  }
 }
