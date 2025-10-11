@@ -91,3 +91,31 @@ fun PreviewManagerRegistrationScreen() {
     )
   }
 }
+
+@Composable
+private fun DriverTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+        shape = RoundedCornerShape(16.dp)
+    )
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "Manager Registration Screen")
+@Composable
+fun PreviewManagerRegistrationScreen() {
+    Flota365_App_mobileTheme {
+        DriverRegistrationScreen(
+            onBack = {},
+            onContinue = {}
+        )
+    }
+}

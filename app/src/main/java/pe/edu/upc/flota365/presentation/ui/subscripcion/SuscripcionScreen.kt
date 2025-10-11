@@ -317,3 +317,56 @@ fun PreviewPaymentInformationScreen() {
     )
   }
 }
+
+@Composable
+private fun SubscriptionScaffold(
+    title: String,
+    onBack: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Atrás")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            content()
+        }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "Subscription Plan Screen")
+@Composable
+fun PreviewSubscriptionPlanScreen() {
+    Flota365_App_mobileTheme {
+        SubscriptionPlanScreen(
+            onBack = {},
+            onSelectPlan = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "Payment Information Screen")
+@Composable
+fun PreviewPaymentInformationScreen() {
+    Flota365_App_mobileTheme {
+        PaymentInformationScreen(
+            onBack = {},
+            planName = "Plan Premium",
+            planPrice = "S/67.89",
+            onSubscriptionConfirmed = {}
+        )
+    }
+}

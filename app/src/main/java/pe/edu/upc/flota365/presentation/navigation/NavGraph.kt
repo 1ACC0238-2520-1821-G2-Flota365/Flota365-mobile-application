@@ -130,3 +130,106 @@ fun PreviewAppNavHost() {
     AppNavHost()
   }
 }
+
+@Composable
+fun AppNavHost(navController: NavHostController = rememberNavController()) {
+    NavHost(
+        navController = navController,
+        startDestination = AppDestination.Onboarding.route
+    ) {
+        composable(AppDestination.Onboarding.route) {
+            OnboardingScreen(
+                onStart = {
+                    navController.navigate(AppDestination.LoginWelcome.route)
+                }
+            )
+        }
+        composable(AppDestination.LoginWelcome.route) {
+            LoginWelcomeScreen(
+                onLogin = {
+                    navController.navigate(AppDestination.LoginForm.route)
+                },
+                onCreateAccount = {
+                    navController.navigate(AppDestination.RoleSelection.route)
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable(AppDestination.LoginForm.route) {
+            LoginFormScreen(
+                onBack = { navController.popBackStack() },
+                onContinue = {
+                    navController.navigate(AppDestination.RoleSelection.route)
+                },
+                onGoToSubscription = {
+                    navController.navigate(AppDestination.SubscriptionPlan.route)
+                }
+            )
+        }
+        composable(AppDestination.RoleSelection.route) {
+            RoleSelectionScreen(
+                onBack = { navController.popBackStack() },
+                onDriverSelected = {
+                    navController.navigate(AppDestination.RegisterDriver.route)
+                },
+                onManagerSelected = {
+                    navController.navigate(AppDestination.RegisterManager.route)
+                }
+            )
+        }
+        composable(AppDestination.RegisterDriver.route) {
+            DriverRegistrationScreen(
+                onBack = { navController.popBackStack() },
+                onContinue = {
+                    navController.navigate(AppDestination.SubscriptionPlan.route)
+                }
+            )
+        }
+        composable(AppDestination.RegisterManager.route) {
+            ManagerRegistrationScreen(
+                onBack = { navController.popBackStack() },
+                onContinue = {
+                    navController.navigate(AppDestination.SubscriptionPlan.route)
+                }
+            )
+        }
+        composable(AppDestination.SubscriptionPlan.route) {
+            SubscriptionPlanScreen(
+                onBack = { navController.popBackStack() },
+                onSelectPlan = { plan ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("selectedPlanName", plan.name)
+                    navController.currentBackStackEntry?.savedStateHandle?.set("selectedPlanPrice", plan.price)
+                    navController.navigate(AppDestination.PaymentInformation.route)
+                }
+            )
+        }
+        composable(AppDestination.PaymentInformation.route) {
+            val previousEntry = navController.previousBackStackEntry
+            val planName = previousEntry?.savedStateHandle?.get<String>("selectedPlanName") ?: "Plan Premium"
+            val planPrice = previousEntry?.savedStateHandle?.get<String>("selectedPlanPrice") ?: "S/67.89"
+            PaymentInformationScreen(
+                onBack = { navController.popBackStack() },
+                planName = planName,
+                planPrice = planPrice,
+                onSubscriptionConfirmed = {
+                    navController.navigate(AppDestination.Onboarding.route) {
+                        popUpTo(AppDestination.Onboarding.route) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "App Navigation Preview")
+@Composable
+fun PreviewAppNavHost() {
+    Flota365_App_mobileTheme {
+        AppNavHost()
+    }
+}

@@ -2,9 +2,9 @@ package pe.edu.upc.flota365.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val PrimaryTeal = Color(0xFF00B6C9)
+val PrimaryTealDark = Color(0xFF008A99)
+val PrimaryTealContainer = Color(0xFFB2EBF2)
 
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)

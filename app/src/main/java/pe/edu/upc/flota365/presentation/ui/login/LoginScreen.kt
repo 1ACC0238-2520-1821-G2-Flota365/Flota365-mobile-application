@@ -369,3 +369,100 @@ fun PreviewRoleSelectionScreen() {
     )
   }
 }
+
+@Composable
+fun ScaffoldContainer(
+    onBack: () -> Unit,
+    title: String,
+    content: @Composable () -> Unit
+) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Atrás")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            content()
+        }
+    }
+}
+
+@Composable
+fun FlotaPrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+        shape = RoundedCornerShape(18.dp)
+    ) {
+        Text(text = text, style = MaterialTheme.typography.titleMedium)
+    }
+}
+
+
+
+@Preview(showBackground = true, showSystemUi = true, name = "Onboarding")
+@Composable
+fun PreviewOnboardingScreen() {
+    Flota365_App_mobileTheme {
+        OnboardingScreen(onStart = {})
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "Login Welcome")
+@Composable
+fun PreviewLoginWelcomeScreen() {
+    Flota365_App_mobileTheme {
+        LoginWelcomeScreen(
+            onLogin = {},
+            onCreateAccount = {},
+            onBack = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "Login Form Themed")
+@Composable
+fun PreviewLoginFormScreenThemed() {
+    Flota365_App_mobileTheme {
+        LoginFormScreen(
+            onBack = {},
+            onContinue = {},
+            onGoToSubscription = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "Role Selection")
+@Composable
+fun PreviewRoleSelectionScreen() {
+    Flota365_App_mobileTheme {
+        RoleSelectionScreen(
+            onBack = {},
+            onDriverSelected = {},
+            onManagerSelected = {}
+        )
+    }
+}
