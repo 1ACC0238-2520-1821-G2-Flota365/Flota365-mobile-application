@@ -11,7 +11,7 @@ android {
 
   defaultConfig {
     applicationId = "pe.edu.upc.flota365"
-    minSdk = 24
+    minSdk = 25
     targetSdk = 36
     versionCode = 1
     versionName = "1.0"
@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+  implementation(libs.compose.material3)
   val composeBom = platform("androidx.compose:compose-bom:2024.10.00")
   implementation(composeBom)
   androidTestImplementation(composeBom)

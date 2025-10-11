@@ -6,7 +6,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -32,83 +33,115 @@ data class DrawerItem(
 
 @Composable
 fun FleetNavGraph(rootNavController: NavHostController) {
-  val nav = rememberNavController()
+  val navController = rememberNavController()
   val drawerState = rememberDrawerState(DrawerValue.Closed)
   val scope = rememberCoroutineScope()
-
-  // Ítems del menú lateral
-  val drawerItems = listOf(
-    DrawerItem(NavDestinations.PROFILE, "Usuario") { Icon(Icons.Filled.Person, null) },
-    DrawerItem(NavDestinations.DASHBOARD, "Dashboard") { Icon(Icons.Filled.Home, null) },
-    DrawerItem(NavDestinations.DRIVERS, "Conductores") { Icon(Icons.Filled.List, null) },
-    DrawerItem(NavDestinations.FLEET, "Gestión de Flota") { Icon(Icons.Filled.DirectionsCar, null) },
-    DrawerItem(NavDestinations.REPORTS, "Reportes") { Icon(Icons.Filled.Assessment, null) },
-    DrawerItem(NavDestinations.MONITORING, "Monitoreo") { Icon(Icons.Filled.Map, null) },
-    DrawerItem(null, "Notificaciones") { Icon(Icons.Filled.Notifications, null) },
-    DrawerItem(null, "Servicio al cliente") { Icon(Icons.Filled.HeadsetMic, null) },
-  )
 
   ModalNavigationDrawer(
     drawerState = drawerState,
     drawerContent = {
-      ModalDrawerSheet(
-        drawerContainerColor = MaterialTheme.colorScheme.surface,
-        modifier = Modifier.width(300.dp)
-      ) {
+      ModalDrawerSheet {
         DrawerHeader()
 
-        val current by nav.currentBackStackEntryAsState()
-        val currRoute = current?.destination?.route
-
-        DrawerList(
-          items = drawerItems,
-          selectedRoute = currRoute,
-          onItemClick = { item ->
+        NavigationDrawerItem(
+          label = { Text("Usuario") },
+          selected = false,
+          onClick = {
+            navController.navigate(NavDestinations.PROFILE)
             scope.launch { drawerState.close() }
-            item.route?.let { route ->
-              if (route != currRoute) {
-                nav.navigate(route) {
-                  popUpTo(nav.graph.startDestinationId) { saveState = true }
-                  launchSingleTop = true
-                  restoreState = true
-                }
-              }
-            }
-          }
+          },
+          icon = { Icon(Icons.Filled.Person, null) }
+        )
+        NavigationDrawerItem(
+          label = { Text("Dashboard") },
+          selected = false,
+          onClick = {
+            navController.navigate(NavDestinations.DASHBOARD)
+            scope.launch { drawerState.close() }
+          },
+          icon = { Icon(Icons.Filled.Home, null) }
+        )
+        NavigationDrawerItem(
+          label = { Text("Conductores") },
+          selected = false,
+          onClick = {
+            navController.navigate(NavDestinations.DRIVERS)
+            scope.launch { drawerState.close() }
+          },
+          icon = { Icon(Icons.Filled.List, null) }
+        )
+        NavigationDrawerItem(
+          label = { Text("Gestión de flota") },
+          selected = false,
+          onClick = {
+            navController.navigate(NavDestinations.FLEET)
+            scope.launch { drawerState.close() }
+          },
+          icon = { Icon(Icons.Filled.DirectionsCar, null) }
+        )
+        NavigationDrawerItem(
+          label = { Text("Reportes") },
+          selected = false,
+          onClick = {
+            navController.navigate(NavDestinations.REPORTS)
+            scope.launch { drawerState.close() }
+          },
+          icon = { Icon(Icons.Filled.Assessment, null) }
+        )
+        NavigationDrawerItem(
+          label = { Text("Monitoreo") },
+          selected = false,
+          onClick = {
+            navController.navigate(NavDestinations.MONITORING)
+            scope.launch { drawerState.close() }
+          },
+          icon = { Icon(Icons.Filled.Map, null) }
         )
 
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.height(12.dp))
         Divider()
-
-        // ✅ Cerrar sesión funcional
+        // ✅ Botón de cerrar sesión
         DrawerLogoutRow(scope, drawerState, rootNavController)
-
-        Spacer(Modifier.height(8.dp))
       }
     }
   ) {
     NavHost(
-      navController = nav,
+      navController = navController,
       startDestination = NavDestinations.DASHBOARD
     ) {
       composable(NavDestinations.DASHBOARD) {
         DashboardScreen(onMenuClick = { scope.launch { drawerState.open() } })
       }
+
       composable(NavDestinations.DRIVERS) {
         DriversListScreen(
-          onCreate = { nav.navigate(NavDestinations.DRIVER_CREATE) },
-          onEdit = { nav.navigate(NavDestinations.DRIVER_EDIT) },
-          onStats = { nav.navigate(NavDestinations.DRIVER_STATS) },
+          onCreate = { navController.navigate(NavDestinations.DRIVER_CREATE) },
+          onEdit = { navController.navigate(NavDestinations.DRIVER_EDIT) },
+          onStats = { navController.navigate(NavDestinations.DRIVER_STATS) },
           onMenuClick = { scope.launch { drawerState.open() } }
         )
       }
-      composable(NavDestinations.DRIVER_CREATE) { DriverFormScreen(DriverFormMode.Create) }
-      composable(NavDestinations.DRIVER_EDIT) { DriverFormScreen(DriverFormMode.Edit) }
-      composable(NavDestinations.DRIVER_STATS) { DriverStatsScreen() }
+
+      composable(NavDestinations.DRIVER_CREATE) {
+        DriverFormScreen(DriverFormMode.Create)
+      }
+      composable(NavDestinations.DRIVER_EDIT) {
+        DriverFormScreen(DriverFormMode.Edit)
+      }
+      composable(NavDestinations.DRIVER_STATS) {
+        DriverStatsScreen()
+      }
+
       composable(NavDestinations.REPORTS) { ReportsScreen() }
       composable(NavDestinations.FLEET) { FleetScreen() }
-      composable(NavDestinations.MONITORING) { MonitoringScreen() }
-      composable(NavDestinations.PROFILE) { ProfileScreen() }
+
+      composable(NavDestinations.MONITORING) {
+        MonitoringScreen(onMenuClick = { scope.launch { drawerState.open() } })
+      }
+
+      composable(NavDestinations.PROFILE) {
+        ProfileScreen()
+      }
     }
   }
 }
@@ -141,76 +174,6 @@ private fun DrawerHeader() {
     Text("Usuario", style = MaterialTheme.typography.titleMedium)
   }
   Divider()
-}
-
-@Composable
-private fun DrawerList(
-  items: List<DrawerItem>,
-  selectedRoute: String?,
-  onItemClick: (DrawerItem) -> Unit
-) {
-  LazyColumn(
-    contentPadding = PaddingValues(vertical = 8.dp),
-    verticalArrangement = Arrangement.spacedBy(2.dp)
-  ) {
-    items(items) { item ->
-      DrawerRow(
-        label = item.label,
-        leading = item.icon,
-        selected = (item.route != null && item.route == selectedRoute),
-        onClick = { onItemClick(item) }
-      )
-    }
-  }
-}
-
-@Composable
-private fun DrawerRow(
-  label: String,
-  leading: @Composable () -> Unit,
-  selected: Boolean,
-  onClick: () -> Unit
-) {
-  val circleColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
-  val iconTint = MaterialTheme.colorScheme.primary
-  val container =
-    if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
-    else MaterialTheme.colorScheme.surface
-
-  Surface(
-    color = container,
-    modifier = Modifier
-      .fillMaxWidth()
-      .heightIn(min = 48.dp)
-      .padding(horizontal = 8.dp)
-      .clip(MaterialTheme.shapes.medium),
-    onClick = onClick
-  ) {
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 12.dp, vertical = 8.dp),
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      Surface(
-        color = circleColor,
-        shape = MaterialTheme.shapes.large
-      ) {
-        Box(Modifier.size(36.dp), contentAlignment = Alignment.Center) {
-          CompositionLocalProvider(LocalContentColor provides iconTint) {
-            leading()
-          }
-        }
-      }
-      Spacer(Modifier.width(14.dp))
-      Text(
-        text = label,
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.weight(1f)
-      )
-    }
-  }
 }
 
 @Composable
@@ -259,10 +222,13 @@ private fun DrawerLogoutRow(
   }
 }
 
+/* ----------------------------- Preview ----------------------------- */
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun FleetNavGraphPreview() {
-  // Previsualización sin rootNavController (solo para diseño)
-  val fakeNav = rememberNavController()
-  FlotaTheme { FleetNavGraph(fakeNav) }
+  val fakeRootNavController = rememberNavController()
+  FlotaTheme {
+    FleetNavGraph(rootNavController = fakeRootNavController)
+  }
 }

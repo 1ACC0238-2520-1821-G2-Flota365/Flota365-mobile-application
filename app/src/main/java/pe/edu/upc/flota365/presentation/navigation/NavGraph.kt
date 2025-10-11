@@ -5,17 +5,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.tooling.preview.Preview
 import pe.edu.upc.flota365.presentation.ui.conductor.DriverRegistrationScreen
 import pe.edu.upc.flota365.presentation.ui.gestor.ManagerRegistrationScreen
-import pe.edu.upc.flota365.presentation.ui.login.LoginFormScreen
-import pe.edu.upc.flota365.presentation.ui.login.LoginWelcomeScreen
-import pe.edu.upc.flota365.presentation.ui.login.OnboardingScreen
-import pe.edu.upc.flota365.presentation.ui.login.RoleSelectionScreen
-import pe.edu.upc.flota365.presentation.ui.subscripcion.PaymentInformationScreen
-import pe.edu.upc.flota365.presentation.ui.subscripcion.SubscriptionPlanScreen
-import androidx.compose.ui.tooling.preview.Preview
+import pe.edu.upc.flota365.presentation.ui.login.*
+import pe.edu.upc.flota365.presentation.ui.subscripcion.*
 import pe.edu.upc.flota365.ui.theme.FlotaTheme
-
 
 sealed class AppDestination(val route: String) {
   data object Onboarding : AppDestination("onboarding")
@@ -26,7 +21,6 @@ sealed class AppDestination(val route: String) {
   data object RegisterManager : AppDestination("register_manager")
   data object SubscriptionPlan : AppDestination("subscription_plan")
   data object PaymentInformation : AppDestination("payment_information")
-
   data object FleetMain : AppDestination("fleet_main")
 }
 
@@ -43,19 +37,15 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         }
       )
     }
+
     composable(AppDestination.LoginWelcome.route) {
       LoginWelcomeScreen(
-        onLogin = {
-          navController.navigate(AppDestination.LoginForm.route)
-        },
-        onCreateAccount = {
-          navController.navigate(AppDestination.RoleSelection.route)
-        },
-        onBack = {
-          navController.popBackStack()
-        }
+        onLogin = { navController.navigate(AppDestination.LoginForm.route) },
+        onCreateAccount = { navController.navigate(AppDestination.RoleSelection.route) },
+        onBack = { navController.popBackStack() }
       )
     }
+
     composable(AppDestination.LoginForm.route) {
       LoginFormScreen(
         onBack = { navController.popBackStack() },
@@ -70,6 +60,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         }
       )
     }
+
     composable(AppDestination.RoleSelection.route) {
       RoleSelectionScreen(
         onBack = { navController.popBackStack() },
@@ -81,6 +72,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         }
       )
     }
+
     composable(AppDestination.RegisterDriver.route) {
       DriverRegistrationScreen(
         onBack = { navController.popBackStack() },
@@ -89,6 +81,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         }
       )
     }
+
     composable(AppDestination.RegisterManager.route) {
       ManagerRegistrationScreen(
         onBack = { navController.popBackStack() },
@@ -97,6 +90,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         }
       )
     }
+
     composable(AppDestination.SubscriptionPlan.route) {
       SubscriptionPlanScreen(
         onBack = { navController.popBackStack() },
@@ -107,6 +101,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         }
       )
     }
+
     composable(AppDestination.PaymentInformation.route) {
       val previousEntry = navController.previousBackStackEntry
       val planName = previousEntry?.savedStateHandle?.get<String>("selectedPlanName") ?: "Plan Premium"
@@ -117,21 +112,20 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         planPrice = planPrice,
         onSubscriptionConfirmed = {
           navController.navigate(AppDestination.Onboarding.route) {
-            popUpTo(AppDestination.Onboarding.route) {
-              inclusive = true
-            }
+            popUpTo(AppDestination.Onboarding.route) { inclusive = true }
             launchSingleTop = true
           }
         }
       )
     }
+
     composable(AppDestination.FleetMain.route) {
       FleetNavGraph(rootNavController = navController)
     }
   }
 }
 
-@Preview(showBackground = true, showSystemUi = true, name = "App Navigation Preview")
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewAppNavHost() {
   FlotaTheme {
