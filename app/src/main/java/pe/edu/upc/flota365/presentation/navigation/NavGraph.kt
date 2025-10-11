@@ -26,6 +26,8 @@ sealed class AppDestination(val route: String) {
   data object RegisterManager : AppDestination("register_manager")
   data object SubscriptionPlan : AppDestination("subscription_plan")
   data object PaymentInformation : AppDestination("payment_information")
+
+  data object FleetMain : AppDestination("fleet_main")
 }
 
 @Composable
@@ -58,7 +60,10 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
       LoginFormScreen(
         onBack = { navController.popBackStack() },
         onContinue = {
-          navController.navigate(AppDestination.RoleSelection.route)
+          navController.navigate(AppDestination.FleetMain.route) {
+            popUpTo(AppDestination.Onboarding.route) { inclusive = true }
+            launchSingleTop = true
+          }
         },
         onGoToSubscription = {
           navController.navigate(AppDestination.SubscriptionPlan.route)
@@ -119,6 +124,9 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
           }
         }
       )
+    }
+    composable(AppDestination.FleetMain.route) {
+      FleetNavGraph(rootNavController = navController)
     }
   }
 }
