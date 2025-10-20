@@ -1,4 +1,4 @@
-package pe.edu.upc.flota365.presentation.ui.conductor
+package pe.edu.upc.flota365.features.auth.presentation.register
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,17 +16,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pe.edu.upc.flota365.features.auth.presentation.FlotaPrimaryButton
-import pe.edu.upc.flota365.features.auth.presentation.ScaffoldContainer
+import pe.edu.upc.flota365.features.auth.presentation.login.FlotaPrimaryButton
+import pe.edu.upc.flota365.features.auth.presentation.components.ScaffoldContainer
 import androidx.compose.ui.tooling.preview.Preview
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 
 @Composable
-fun DriverRegistrationScreen(
+fun ManagerRegistrationScreen(
   onBack: () -> Unit,
   onContinue: () -> Unit
 ) {
-  ScaffoldContainer(onBack = onBack, title = "Registro - Conductor") {
+  ScaffoldContainer(onBack = onBack, title = "Registro - Gestor") {
     Column(
       modifier = Modifier
         .fillMaxSize()
@@ -35,24 +35,24 @@ fun DriverRegistrationScreen(
     ) {
       Column {
         Text(
-          text = "Completa tus datos para crear tu cuenta",
+          text = "Ingresa la información de tu empresa",
           style = MaterialTheme.typography.titleMedium,
           modifier = Modifier.padding(bottom = 16.dp)
         )
 
         var firstName by rememberSaveable { mutableStateOf("") }
         var lastName by rememberSaveable { mutableStateOf("") }
-        var dni by rememberSaveable { mutableStateOf("") }
-        var license by rememberSaveable { mutableStateOf("") }
+        var ruc by rememberSaveable { mutableStateOf("") }
+        var businessName by rememberSaveable { mutableStateOf("") }
         var email by rememberSaveable { mutableStateOf("") }
         var phone by rememberSaveable { mutableStateOf("") }
 
-        DriverTextField(value = firstName, onValueChange = { firstName = it }, label = "Nombres")
-        DriverTextField(value = lastName, onValueChange = { lastName = it }, label = "Apellidos")
-        DriverTextField(value = dni, onValueChange = { dni = it }, label = "Número de DNI")
-        DriverTextField(value = license, onValueChange = { license = it }, label = "Licencia de conducir")
-        DriverTextField(value = email, onValueChange = { email = it }, label = "Correo electrónico")
-        DriverTextField(value = phone, onValueChange = { phone = it }, label = "Teléfono de contacto")
+        ManagerTextField(value = firstName, onValueChange = { firstName = it }, label = "Nombres")
+        ManagerTextField(value = lastName, onValueChange = { lastName = it }, label = "Apellidos")
+        ManagerTextField(value = ruc, onValueChange = { ruc = it }, label = "Número de RUC")
+        ManagerTextField(value = businessName, onValueChange = { businessName = it }, label = "Razón social")
+        ManagerTextField(value = email, onValueChange = { email = it }, label = "Correo electrónico")
+        ManagerTextField(value = phone, onValueChange = { phone = it }, label = "Teléfono de contacto")
       }
 
       FlotaPrimaryButton(
@@ -65,7 +65,7 @@ fun DriverRegistrationScreen(
 }
 
 @Composable
-private fun DriverTextField(
+private fun ManagerTextField(
   value: String,
   onValueChange: (String) -> Unit,
   label: String
@@ -84,8 +84,8 @@ private fun DriverTextField(
 @Preview(showBackground = true, showSystemUi = true, name = "Manager Registration Screen")
 @Composable
 fun PreviewManagerRegistrationScreen() {
-  FlotaTheme() {
-    DriverRegistrationScreen(
+  FlotaTheme {
+    ManagerRegistrationScreen(
       onBack = {},
       onContinue = {}
     )

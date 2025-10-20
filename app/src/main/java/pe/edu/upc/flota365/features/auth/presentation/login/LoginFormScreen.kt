@@ -1,4 +1,4 @@
-package pe.edu.upc.flota365.features.auth.presentation
+package pe.edu.upc.flota365.features.auth.presentation.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,7 +26,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.collectAsState
 import pe.edu.upc.flota365.core.utils.UiState
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
-
+import pe.edu.upc.flota365.features.auth.presentation.components.ScaffoldContainer
+import pe.edu.upc.flota365.features.auth.presentation.UserSession
 
 
 @Composable
@@ -101,6 +102,7 @@ fun LoginFormScreen(
             color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.size(20.dp)
           )
+
           else -> Text("Continuar")
         }
       }

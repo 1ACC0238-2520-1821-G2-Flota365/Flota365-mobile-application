@@ -6,14 +6,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.tooling.preview.Preview
-import pe.edu.upc.flota365.presentation.ui.conductor.DriverRegistrationScreen
-import pe.edu.upc.flota365.presentation.ui.gestor.ManagerRegistrationScreen
-import pe.edu.upc.flota365.features.auth.presentation.LoginFormScreen
-import pe.edu.upc.flota365.features.auth.presentation.LoginWelcomeScreen
+import pe.edu.upc.flota365.features.auth.presentation.register.DriverRegistrationScreen
+import pe.edu.upc.flota365.features.auth.presentation.register.ManagerRegistrationScreen
+import pe.edu.upc.flota365.features.auth.presentation.login.LoginFormScreen
+import pe.edu.upc.flota365.features.auth.presentation.login.LoginWelcomeScreen
 import pe.edu.upc.flota365.features.auth.presentation.OnboardingScreen
 import pe.edu.upc.flota365.features.auth.presentation.RoleSelectionScreen
-import pe.edu.upc.flota365.presentation.ui.subscripcion.PaymentInformationScreen
-import pe.edu.upc.flota365.presentation.ui.subscripcion.SubscriptionPlanScreen
+import pe.edu.upc.flota365.features.auth.presentation.PaymentInformationScreen
+import pe.edu.upc.flota365.features.auth.presentation.SubscriptionPlanScreen
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 
 sealed class AppDestination(val route: String) {

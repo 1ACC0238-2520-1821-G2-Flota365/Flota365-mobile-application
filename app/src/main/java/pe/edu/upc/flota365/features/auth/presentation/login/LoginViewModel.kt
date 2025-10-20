@@ -1,4 +1,4 @@
-package pe.edu.upc.flota365.features.auth.presentation
+package pe.edu.upc.flota365.features.auth.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

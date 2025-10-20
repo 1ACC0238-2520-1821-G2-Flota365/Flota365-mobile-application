@@ -1,4 +1,4 @@
-package pe.edu.upc.flota365.presentation.ui.subscripcion
+package pe.edu.upc.flota365.features.auth.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,7 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import pe.edu.upc.flota365.features.auth.presentation.FlotaPrimaryButton
+import pe.edu.upc.flota365.features.auth.presentation.login.FlotaPrimaryButton
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 import androidx.compose.ui.tooling.preview.Preview
 
