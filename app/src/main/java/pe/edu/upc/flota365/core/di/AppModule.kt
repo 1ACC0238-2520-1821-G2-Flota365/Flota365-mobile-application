@@ -1,25 +1,24 @@
 package pe.edu.upc.flota365.core.di
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import pe.edu.upc.flota365.features.auth.data.remote.services.AuthService
 import pe.edu.upc.flota365.features.auth.data.repositories.AuthRepositoryImpl
 import pe.edu.upc.flota365.features.auth.domain.repositories.AuthRepository
 import retrofit2.Retrofit
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-  // ... (OkHttpClient providers remain the same)
   @Provides
   @Singleton
   fun provideLoggingInterceptor(): HttpLoggingInterceptor =
@@ -34,22 +33,24 @@ object AppModule {
       .addInterceptor(loggingInterceptor)
       .build()
 
+  @Provides
+  @Singleton
+  fun provideGson(): Gson =
+    GsonBuilder()
+      .create()
 
   @Provides
   @Singleton
-  fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
-    val BASE_URL = "https://underground-tuesday-renworkplace-1e2821cb.koyeb.app/api/"
-    val contentType = "application/json".toMediaType()
+  fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
+    val baseUrl = "https://underground-tuesday-renworkplace-1e2821cb.koyeb.app/api/"
 
     return Retrofit.Builder()
-      .baseUrl(BASE_URL)
+      .baseUrl(baseUrl)
       .client(okHttpClient)
-      // Replaced Moshi with Kotlinx Serialization converter
-      .addConverterFactory(Json.asConverterFactory(contentType))
+      .addConverterFactory(GsonConverterFactory.create(gson))
       .build()
   }
 
-  // ... (Auth feature providers remain the same)
   @Provides
   @Singleton
   fun provideAuthService(retrofit: Retrofit): AuthService =

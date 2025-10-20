@@ -1,5 +1,7 @@
 [versions]
 agp = "8.5.2"
+converterGson = "3.0.0"
+gsonVersion = "2.13.2"
 javapoet = "1.13.0"
 kotlin = "2.2.20"
 kotlinSerialization = "2.0.21"
@@ -19,6 +21,7 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 ksp = "2.2.20-2.0.4"
+gson = "2.13.2"
 
 [libraries]
 # AndroidX Core & Lifecycle
@@ -41,6 +44,7 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 # Hilt
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 google-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid" }
 google-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hiltAndroid" }
 
@@ -48,6 +52,7 @@ google-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", ve
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 
 # Networking
+gson = { module = "com.google.code.gson:gson", version.ref = "gsonVersion" }
 javapoet = { module = "com.squareup:javapoet", version.ref = "javapoet" }
 squareup-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 squareup-retrofit-converter-kotlinx-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
