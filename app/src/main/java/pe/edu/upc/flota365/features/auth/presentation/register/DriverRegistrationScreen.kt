@@ -83,7 +83,7 @@ private fun DriverTextField(
 
 @Preview(showBackground = true, showSystemUi = true, name = "Manager Registration Screen")
 @Composable
-fun PreviewManagerRegistrationScreen() {
+fun PreviewDriverRegistrationScreen() {
   FlotaTheme() {
     DriverRegistrationScreen(
       onBack = {},
