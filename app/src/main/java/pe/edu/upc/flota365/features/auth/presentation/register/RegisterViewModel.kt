@@ -1,0 +1,69 @@
+package pe.edu.upc.flota365.features.auth.presentation.register
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import pe.edu.upc.flota365.features.auth.data.remote.models.*
+import pe.edu.upc.flota365.features.auth.domain.repositories.AuthRepository
+import javax.inject.Inject
+
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+  private val repository: AuthRepository
+) : ViewModel() {
+
+  fun registerDriver(
+    firstName: String,
+    lastName: String,
+    dni: String,
+    license: String,
+    email: String,
+    phone: String,
+    password: String,
+    onSuccess: () -> Unit,
+    onError: (String) -> Unit
+  ) {
+    viewModelScope.launch {
+      try {
+        val response = repository.registerDriver(
+          DriverRegisterRequestDto(firstName, lastName, dni, license, email, phone, password)
+        )
+        if (response.isSuccessful) {
+          onSuccess()
+        } else {
+          onError("Error al registrar: ${response.message()}")
+        }
+      } catch (e: Exception) {
+        onError(e.message ?: "Error desconocido")
+      }
+    }
+  }
+
+  fun registerManager(
+    firstName: String,
+    lastName: String,
+    ruc: String,
+    businessName: String,
+    email: String,
+    phone: String,
+    password: String,
+    onSuccess: () -> Unit,
+    onError: (String) -> Unit
+  ) {
+    viewModelScope.launch {
+      try {
+        val response = repository.registerManager(
+          ManagerRegisterRequestDto(firstName, lastName, ruc, businessName, email, phone, password)
+        )
+        if (response.isSuccessful) {
+          onSuccess()
+        } else {
+          onError("Error al registrar: ${response.message()}")
+        }
+      } catch (e: Exception) {
+        onError(e.message ?: "Error desconocido")
+      }
+    }
+  }
+}

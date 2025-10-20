@@ -3,10 +3,11 @@ package pe.edu.upc.flota365.features.auth.data.repositories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pe.edu.upc.flota365.core.utils.Resource
-import pe.edu.upc.flota365.features.auth.data.remote.models.LoginRequestDto
+import pe.edu.upc.flota365.features.auth.data.remote.models.*
 import pe.edu.upc.flota365.features.auth.data.remote.services.AuthService
 import pe.edu.upc.flota365.features.auth.domain.models.User
 import pe.edu.upc.flota365.features.auth.domain.repositories.AuthRepository
+import retrofit2.Response
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -32,18 +33,26 @@ class AuthRepositoryImpl @Inject constructor(
               createdAt = body.createdAt,
               updatedAt = body.updatedAt
             )
-            return@withContext Resource.Success(user)
+            Resource.Success(user)
           } else {
-            return@withContext Resource.Error("Respuesta vacía del servidor")
+            Resource.Error("Respuesta vacía del servidor")
           }
         } else {
-          return@withContext Resource.Error(
-            "Error HTTP ${response.code()}: ${response.message()}"
-          )
+          Resource.Error("Error HTTP ${response.code()}: ${response.message()}")
         }
       } catch (e: Exception) {
-        return@withContext Resource.Error(e.localizedMessage ?: "Error desconocido")
+        Resource.Error(e.localizedMessage ?: "Error desconocido")
       }
+    }
+
+  override suspend fun registerDriver(request: DriverRegisterRequestDto): Response<LoginResponseDto> =
+    withContext(Dispatchers.IO) {
+      service.registerDriver(request)
+    }
+
+  override suspend fun registerManager(request: ManagerRegisterRequestDto): Response<LoginResponseDto> =
+    withContext(Dispatchers.IO) {
+      service.registerManager(request)
     }
 
   override suspend fun getProfile(token: String): User =

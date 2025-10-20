@@ -1,31 +1,32 @@
 package pe.edu.upc.flota365.features.auth.presentation.register
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import android.util.Log
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import pe.edu.upc.flota365.features.auth.presentation.login.FlotaPrimaryButton
-import pe.edu.upc.flota365.features.auth.presentation.components.ScaffoldContainer
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.features.auth.presentation.components.ScaffoldContainer
+import pe.edu.upc.flota365.features.auth.presentation.login.FlotaPrimaryButton
 
 @Composable
 fun ManagerRegistrationScreen(
   onBack: () -> Unit,
-  onContinue: () -> Unit
+  onContinue: () -> Unit,
+  viewModel: RegisterViewModel = hiltViewModel()
 ) {
+  var firstName by rememberSaveable { mutableStateOf("") }
+  var lastName by rememberSaveable { mutableStateOf("") }
+  var ruc by rememberSaveable { mutableStateOf("") }
+  var businessName by rememberSaveable { mutableStateOf("") }
+  var email by rememberSaveable { mutableStateOf("") }
+  var phone by rememberSaveable { mutableStateOf("") }
+
   ScaffoldContainer(onBack = onBack, title = "Registro - Gestor") {
     Column(
       modifier = Modifier
@@ -40,13 +41,6 @@ fun ManagerRegistrationScreen(
           modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        var firstName by rememberSaveable { mutableStateOf("") }
-        var lastName by rememberSaveable { mutableStateOf("") }
-        var ruc by rememberSaveable { mutableStateOf("") }
-        var businessName by rememberSaveable { mutableStateOf("") }
-        var email by rememberSaveable { mutableStateOf("") }
-        var phone by rememberSaveable { mutableStateOf("") }
-
         ManagerTextField(value = firstName, onValueChange = { firstName = it }, label = "Nombres")
         ManagerTextField(value = lastName, onValueChange = { lastName = it }, label = "Apellidos")
         ManagerTextField(value = ruc, onValueChange = { ruc = it }, label = "Número de RUC")
@@ -57,7 +51,24 @@ fun ManagerRegistrationScreen(
 
       FlotaPrimaryButton(
         text = "Continuar",
-        onClick = onContinue,
+        onClick = {
+          viewModel.registerManager(
+            firstName = firstName,
+            lastName = lastName,
+            ruc = ruc,
+            businessName = businessName,
+            email = email,
+            phone = phone,
+            password = "123456", // Temporal, o podrías agregar un campo de contraseña
+            onSuccess = {
+              Log.d("Register", "Gestor registrado exitosamente")
+              onContinue()
+            },
+            onError = { msg ->
+              Log.e("Register", "Error al registrar gestor: $msg")
+            }
+          )
+        },
         modifier = Modifier.fillMaxWidth()
       )
     }
