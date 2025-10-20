@@ -16,10 +16,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pe.edu.upc.flota365.presentation.ui.login.FlotaPrimaryButton
-import pe.edu.upc.flota365.presentation.ui.login.ScaffoldContainer
+import pe.edu.upc.flota365.features.auth.presentation.FlotaPrimaryButton
+import pe.edu.upc.flota365.features.auth.presentation.ScaffoldContainer
 import androidx.compose.ui.tooling.preview.Preview
-import pe.edu.upc.flota365.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 
 @Composable
 fun DriverRegistrationScreen(

@@ -8,9 +8,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.tooling.preview.Preview
 import pe.edu.upc.flota365.presentation.ui.conductor.DriverRegistrationScreen
 import pe.edu.upc.flota365.presentation.ui.gestor.ManagerRegistrationScreen
-import pe.edu.upc.flota365.presentation.ui.login.*
-import pe.edu.upc.flota365.presentation.ui.subscripcion.*
-import pe.edu.upc.flota365.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.features.auth.presentation.LoginFormScreen
+import pe.edu.upc.flota365.features.auth.presentation.LoginWelcomeScreen
+import pe.edu.upc.flota365.features.auth.presentation.OnboardingScreen
+import pe.edu.upc.flota365.features.auth.presentation.RoleSelectionScreen
+import pe.edu.upc.flota365.presentation.ui.subscripcion.PaymentInformationScreen
+import pe.edu.upc.flota365.presentation.ui.subscripcion.SubscriptionPlanScreen
+import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 
 sealed class AppDestination(val route: String) {
   data object Onboarding : AppDestination("onboarding")
@@ -30,14 +34,14 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
     navController = navController,
     startDestination = AppDestination.Onboarding.route
   ) {
+    // ---------------- ONBOARDING ----------------
     composable(AppDestination.Onboarding.route) {
       OnboardingScreen(
-        onStart = {
-          navController.navigate(AppDestination.LoginWelcome.route)
-        }
+        onStart = { navController.navigate(AppDestination.LoginWelcome.route) }
       )
     }
 
+    // ---------------- LOGIN WELCOME ----------------
     composable(AppDestination.LoginWelcome.route) {
       LoginWelcomeScreen(
         onLogin = { navController.navigate(AppDestination.LoginForm.route) },
@@ -46,51 +50,43 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
       )
     }
 
+    // ---------------- LOGIN FORM ----------------
     composable(AppDestination.LoginForm.route) {
       LoginFormScreen(
         onBack = { navController.popBackStack() },
-        onContinue = {
+        onLoginSuccess = {
           navController.navigate(AppDestination.FleetMain.route) {
             popUpTo(AppDestination.Onboarding.route) { inclusive = true }
             launchSingleTop = true
           }
-        },
-        onGoToSubscription = {
-          navController.navigate(AppDestination.SubscriptionPlan.route)
         }
       )
     }
 
+    // ---------------- REGISTROS ----------------
     composable(AppDestination.RoleSelection.route) {
       RoleSelectionScreen(
         onBack = { navController.popBackStack() },
-        onDriverSelected = {
-          navController.navigate(AppDestination.RegisterDriver.route)
-        },
-        onManagerSelected = {
-          navController.navigate(AppDestination.RegisterManager.route)
-        }
+        onDriverSelected = { navController.navigate(AppDestination.RegisterDriver.route) },
+        onManagerSelected = { navController.navigate(AppDestination.RegisterManager.route) }
       )
     }
 
     composable(AppDestination.RegisterDriver.route) {
       DriverRegistrationScreen(
         onBack = { navController.popBackStack() },
-        onContinue = {
-          navController.navigate(AppDestination.SubscriptionPlan.route)
-        }
+        onContinue = { navController.navigate(AppDestination.SubscriptionPlan.route) }
       )
     }
 
     composable(AppDestination.RegisterManager.route) {
       ManagerRegistrationScreen(
         onBack = { navController.popBackStack() },
-        onContinue = {
-          navController.navigate(AppDestination.SubscriptionPlan.route)
-        }
+        onContinue = { navController.navigate(AppDestination.SubscriptionPlan.route) }
       )
     }
 
+    // ---------------- SUSCRIPCIÓN ----------------
     composable(AppDestination.SubscriptionPlan.route) {
       SubscriptionPlanScreen(
         onBack = { navController.popBackStack() },
@@ -106,6 +102,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
       val previousEntry = navController.previousBackStackEntry
       val planName = previousEntry?.savedStateHandle?.get<String>("selectedPlanName") ?: "Plan Premium"
       val planPrice = previousEntry?.savedStateHandle?.get<String>("selectedPlanPrice") ?: "S/67.89"
+
       PaymentInformationScreen(
         onBack = { navController.popBackStack() },
         planName = planName,
@@ -119,6 +116,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
       )
     }
 
+    // ---------------- FLEET MAIN ----------------
     composable(AppDestination.FleetMain.route) {
       FleetNavGraph(rootNavController = navController)
     }
@@ -128,7 +126,5 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewAppNavHost() {
-  FlotaTheme {
-    AppNavHost()
-  }
+  FlotaTheme { AppNavHost() }
 }

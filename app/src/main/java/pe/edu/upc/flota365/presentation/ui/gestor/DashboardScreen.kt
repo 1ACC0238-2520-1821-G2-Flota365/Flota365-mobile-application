@@ -18,15 +18,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pe.edu.upc.flota365.presentation.ui.components.AppScaffold
-import pe.edu.upc.flota365.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 
 @Composable
 fun DashboardScreen(
   onMenuClick: () -> Unit = {},
+  onLogout: () -> Unit = {},
 ) {
   AppScaffold(
     title = "Flota365",
-    onMenuClick = onMenuClick
+    onMenuClick = onMenuClick,
+    onLogout = onLogout
   ) { padding ->
 
     var query by remember { mutableStateOf("") }

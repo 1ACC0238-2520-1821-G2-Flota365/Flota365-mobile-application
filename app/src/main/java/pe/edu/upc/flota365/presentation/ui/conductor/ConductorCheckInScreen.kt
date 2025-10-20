@@ -20,7 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pe.edu.upc.flota365.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

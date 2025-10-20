@@ -3,36 +3,52 @@ package pe.edu.upc.flota365.presentation.ui.components
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import pe.edu.upc.flota365.features.auth.presentation.UserSession
 
 /**
- * Scaffold base con TopAppBar que SIEMPRE muestra el ícono de menú.
- * onMenuClick abre el drawer desde el NavGraph.
+ * Scaffold base con TopAppBar que muestra el ícono de menú y saludo del usuario.
+ * Incluye botón de cerrar sesión.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppScaffold(
   title: String,
   onMenuClick: () -> Unit,
+  onLogout: () -> Unit = {},
   content: @Composable (PaddingValues) -> Unit
 ) {
+  val user = UserSession.currentUser
+
   Scaffold(
     modifier = Modifier.fillMaxSize(),
     topBar = {
       TopAppBar(
-        title = { Text(title) },
+        title = {
+          Text(
+            text = when {
+              user != null && user.firstName.isNotBlank() ->
+                "Hola, ${user.firstName}"
+              user != null && user.fullName.isNotBlank() ->
+                "Hola, ${user.fullName.split(" ").first()}"
+              else -> title
+            }
+          )
+        },
         navigationIcon = {
           IconButton(onClick = onMenuClick) {
             Icon(Icons.Filled.Menu, contentDescription = "Abrir menú")
+          }
+        },
+        actions = {
+          if (user != null) {
+            IconButton(onClick = onLogout) {
+              Icon(Icons.Filled.ExitToApp, contentDescription = "Cerrar sesión")
+            }
           }
         },
         colors = TopAppBarDefaults.topAppBarColors()

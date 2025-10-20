@@ -10,6 +10,7 @@ import pe.edu.upc.flota365.domain.model.Report
 import pe.edu.upc.flota365.domain.usecase.GetRecentReportsUseCase
 import javax.inject.Inject
 
+
 // 1. Estado de la UI: Representa todos los datos que la pantalla necesita.
 data class ReportsUiState(
   val recentReports: List<Report> = emptyList(),

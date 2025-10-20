@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import pe.edu.upc.flota365.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 
 @Composable
 fun ProfileScreen() {

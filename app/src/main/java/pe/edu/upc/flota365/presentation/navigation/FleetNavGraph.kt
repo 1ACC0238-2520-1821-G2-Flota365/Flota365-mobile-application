@@ -1,18 +1,13 @@
 package pe.edu.upc.flota365.presentation.navigation
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -21,15 +16,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import pe.edu.upc.flota365.features.auth.presentation.UserSession
 import pe.edu.upc.flota365.presentation.ui.gestor.*
 import pe.edu.upc.flota365.presentation.ui.profile.ProfileScreen
-import pe.edu.upc.flota365.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 
-data class DrawerItem(
-  val route: String? = null,
-  val label: String,
-  val icon: @Composable () -> Unit
-)
+/* ----------------------------- NAV GRAPH ----------------------------- */
 
 @Composable
 fun FleetNavGraph(rootNavController: NavHostController) {
@@ -52,6 +44,7 @@ fun FleetNavGraph(rootNavController: NavHostController) {
           },
           icon = { Icon(Icons.Filled.Person, null) }
         )
+
         NavigationDrawerItem(
           label = { Text("Dashboard") },
           selected = false,
@@ -61,6 +54,7 @@ fun FleetNavGraph(rootNavController: NavHostController) {
           },
           icon = { Icon(Icons.Filled.Home, null) }
         )
+
         NavigationDrawerItem(
           label = { Text("Conductores") },
           selected = false,
@@ -70,6 +64,7 @@ fun FleetNavGraph(rootNavController: NavHostController) {
           },
           icon = { Icon(Icons.Filled.List, null) }
         )
+
         NavigationDrawerItem(
           label = { Text("Gestión de flota") },
           selected = false,
@@ -79,6 +74,7 @@ fun FleetNavGraph(rootNavController: NavHostController) {
           },
           icon = { Icon(Icons.Filled.DirectionsCar, null) }
         )
+
         NavigationDrawerItem(
           label = { Text("Reportes") },
           selected = false,
@@ -88,6 +84,7 @@ fun FleetNavGraph(rootNavController: NavHostController) {
           },
           icon = { Icon(Icons.Filled.Assessment, null) }
         )
+
         NavigationDrawerItem(
           label = { Text("Monitoreo") },
           selected = false,
@@ -100,6 +97,7 @@ fun FleetNavGraph(rootNavController: NavHostController) {
 
         Spacer(Modifier.height(12.dp))
         Divider()
+
         // ✅ Botón de cerrar sesión
         DrawerLogoutRow(scope, drawerState, rootNavController)
       }
@@ -149,31 +147,34 @@ fun FleetNavGraph(rootNavController: NavHostController) {
 /* ----------------------------- Drawer UI ----------------------------- */
 
 @Composable
-private fun DrawerHeader() {
+fun DrawerHeader() {
+  val user = UserSession.currentUser
+
   Column(
     modifier = Modifier
       .fillMaxWidth()
-      .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
+      .padding(16.dp),
     horizontalAlignment = Alignment.Start
   ) {
-    val chipShape: Shape = MaterialTheme.shapes.large
     Surface(
       color = MaterialTheme.colorScheme.primary,
       contentColor = MaterialTheme.colorScheme.onPrimary,
-      modifier = Modifier
-        .size(44.dp)
-        .clip(chipShape),
-      tonalElevation = 0.dp,
-      shadowElevation = 0.dp
+      modifier = Modifier.size(48.dp)
     ) {
       Box(contentAlignment = Alignment.Center) {
-        Icon(Icons.Filled.Person, contentDescription = null)
+        Icon(Icons.Default.Person, contentDescription = null)
       }
     }
-    Spacer(Modifier.height(10.dp))
-    Text("Usuario", style = MaterialTheme.typography.titleMedium)
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+      text = user?.fullName ?: "Invitado",
+      style = MaterialTheme.typography.titleMedium
+    )
+    Text(
+      text = user?.email ?: "",
+      style = MaterialTheme.typography.bodySmall
+    )
   }
-  Divider()
 }
 
 @Composable
@@ -210,6 +211,7 @@ private fun DrawerLogoutRow(
       onClick = {
         scope.launch {
           drawerState.close()
+          UserSession.currentUser = null
           rootNavController.navigate(AppDestination.LoginWelcome.route) {
             popUpTo(AppDestination.FleetMain.route) { inclusive = true }
             launchSingleTop = true
@@ -227,8 +229,8 @@ private fun DrawerLogoutRow(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun FleetNavGraphPreview() {
-  val fakeRootNavController = rememberNavController()
+  val navController = rememberNavController()
   FlotaTheme {
-    FleetNavGraph(rootNavController = fakeRootNavController)
+    FleetNavGraph(rootNavController = navController)
   }
 }
