@@ -9,8 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import pe.edu.upc.flota365.features.auth.data.remote.services.AuthService
-import pe.edu.upc.flota365.features.auth.data.repositories.AuthRepositoryImpl
-import pe.edu.upc.flota365.features.auth.domain.repositories.AuthRepository
+import pe.edu.upc.flota365.features.auth.data.remote.services.ManagerService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -28,10 +27,26 @@ object AppModule {
 
   @Provides
   @Singleton
-  fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
-    OkHttpClient.Builder()
+  fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
+    val trustAllCerts = arrayOf<javax.net.ssl.TrustManager>(
+      object : javax.net.ssl.X509TrustManager {
+        override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
+        override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
+        override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> = arrayOf()
+      }
+    )
+
+    val sslContext = javax.net.ssl.SSLContext.getInstance("SSL")
+    sslContext.init(null, trustAllCerts, java.security.SecureRandom())
+
+    val sslSocketFactory = sslContext.socketFactory
+
+    return OkHttpClient.Builder()
       .addInterceptor(loggingInterceptor)
+      .sslSocketFactory(sslSocketFactory, trustAllCerts[0] as javax.net.ssl.X509TrustManager)
+      .hostnameVerifier { _, _ -> true }
       .build()
+  }
 
   @Provides
   @Singleton
@@ -41,15 +56,12 @@ object AppModule {
 
   @Provides
   @Singleton
-  fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
-    val baseUrl = "https://underground-tuesday-renworkplace-1e2821cb.koyeb.app/api/"
-
-    return Retrofit.Builder()
-      .baseUrl(baseUrl)
+  fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit =
+    Retrofit.Builder()
+      .baseUrl("https://underground-tuesday-renworkplace-1e2821cb.koyeb.app/api/")
       .client(okHttpClient)
       .addConverterFactory(GsonConverterFactory.create(gson))
       .build()
-  }
 
   @Provides
   @Singleton
@@ -58,6 +70,7 @@ object AppModule {
 
   @Provides
   @Singleton
-  fun provideAuthRepository(service: AuthService): AuthRepository =
-    AuthRepositoryImpl(service)
+  fun provideManagerService(retrofit: Retrofit): ManagerService =
+    retrofit.create(ManagerService::class.java)
+
 }

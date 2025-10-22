@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pe.edu.upc.flota365.core.utils.Resource
 import pe.edu.upc.flota365.core.utils.UiState
+import pe.edu.upc.flota365.core.utils.UiState.*
 import pe.edu.upc.flota365.features.auth.domain.models.User
 import pe.edu.upc.flota365.features.auth.domain.repositories.AuthRepository
 import javax.inject.Inject
@@ -46,10 +47,11 @@ class LoginViewModel @Inject constructor(
       _user.value = when (result) {
         is Resource.Success -> {
           result.data?.let { user ->
-            UiState.Success(user)
-          } ?: UiState.Error("No se pudo obtener la información del usuario")
+            Success(user)
+          } ?: Error("No se pudo obtener la información del usuario")
         }
-        is Resource.Error -> UiState.Error(result.message ?: "Error desconocido")
+        is Resource.Error -> Error(result.message ?: "Error desconocido")
+        is Resource.Loading<*> -> TODO()
       }
     }
   }

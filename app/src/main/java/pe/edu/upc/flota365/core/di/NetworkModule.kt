@@ -16,23 +16,5 @@ import pe.edu.upc.flota365.features.auth.data.remote.services.AuthService
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-  private const val BASE_URL = "https://underground-tuesday-renworkplace-1e2821cb.koyeb.app/swagger/"
-
-  @Provides
-  @Singleton
-  fun provideGson(): Gson = GsonBuilder().setLenient().create()
-
-  @Provides
-  @Singleton
-  fun provideRetrofit(gson: Gson): Retrofit =
-    Retrofit.Builder()
-      .baseUrl(BASE_URL)
-      .addConverterFactory(GsonConverterFactory.create(gson))
-      .client(OkHttpClient.Builder().build())
-      .build()
-
-  @Provides
-  @Singleton
-  fun provideAuthService(retrofit: Retrofit): AuthService =
-    retrofit.create(AuthService::class.java)
+  private const val BASE_URL = "https://underground-tuesday-renworkplace-1e2821cb.koyeb.app/api/"
 }
