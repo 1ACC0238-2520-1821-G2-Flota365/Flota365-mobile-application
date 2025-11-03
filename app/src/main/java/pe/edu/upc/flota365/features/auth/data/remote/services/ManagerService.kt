@@ -8,9 +8,8 @@ import retrofit2.http.POST
 
 interface ManagerService {
 
-  @POST("api/Manager")
+  @POST("Manager")
   suspend fun createManager(@Body request: CreateManagerApiRequest): Response<Unit>
-
-  @GET("api/Manager")
+  @GET("Manager")
   suspend fun getManagers(): Response<List<Any>>
 }

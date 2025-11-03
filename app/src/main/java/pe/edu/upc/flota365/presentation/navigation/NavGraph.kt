@@ -45,7 +45,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
     composable(AppDestination.LoginWelcome.route) {
       LoginWelcomeScreen(
         onLogin = { navController.navigate(AppDestination.LoginForm.route) },
-        onCreateAccount = { navController.navigate(AppDestination.RoleSelection.route) },
+        onCreateAccount = { navController.navigate(AppDestination.RegisterManager.route) }, // 🔥 cambio aquí
         onBack = { navController.popBackStack() }
       )
     }
@@ -64,21 +64,6 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
     }
 
     // ---------------- REGISTROS ----------------
-    composable(AppDestination.RoleSelection.route) {
-      RoleSelectionScreen(
-        onBack = { navController.popBackStack() },
-        onDriverSelected = { navController.navigate(AppDestination.RegisterDriver.route) },
-        onManagerSelected = { navController.navigate(AppDestination.RegisterManager.route) }
-      )
-    }
-
-    composable(AppDestination.RegisterDriver.route) {
-      DriverRegistrationScreen(
-        onBack = { navController.popBackStack() },
-        onContinue = { navController.navigate(AppDestination.SubscriptionPlan.route) }
-      )
-    }
-
     composable(AppDestination.RegisterManager.route) {
       ManagerRegistrationScreen(
         onBack = { navController.popBackStack() },

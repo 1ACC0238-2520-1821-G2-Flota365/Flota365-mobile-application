@@ -1,6 +1,6 @@
 package pe.edu.upc.flota365.features.auth.data.remote.models
 
-data class ManagerRegisterRequestDto(
+data class RegisterUserRequest(
   val firstName: String,
   val lastName: String,
   val email: String,

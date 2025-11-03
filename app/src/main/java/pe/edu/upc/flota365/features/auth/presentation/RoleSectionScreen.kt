@@ -37,13 +37,6 @@ fun RoleSelectionScreen(
         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
         modifier = Modifier.padding(vertical = 24.dp)
       )
-
-      RoleCard(
-        title = "Conductor",
-        description = "Accede a tus rutas, incidencias y novedades.",
-        onClick = onDriverSelected
-      )
-      Spacer(modifier = Modifier.height(16.dp))
       RoleCard(
         title = "Gestor",
         description = "Administra flotas, pagos y reportes en tiempo real.",

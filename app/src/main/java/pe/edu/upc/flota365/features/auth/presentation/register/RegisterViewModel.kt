@@ -53,10 +53,20 @@ class RegisterViewModel @Inject constructor(
   ) {
     viewModelScope.launch {
       try {
-        val response = repository.registerManager(
-          ManagerRegisterRequestDto(firstName, lastName, ruc, businessName, email, phone, password)
+        // Solo se envían los campos que el backend de autenticación acepta
+        val request = ManagerRegisterRequestDto(
+          firstName = firstName,
+          lastName = lastName,
+          email = email,
+          password = password,
+          role = "Manager"
         )
+
+        val response = repository.registerManager(request)
+
         if (response.isSuccessful) {
+          // Aquí puedes guardar localmente los otros datos si los necesitas
+          saveLocalManagerData(ruc, businessName, phone)
           onSuccess()
         } else {
           onError("Error al registrar: ${response.message()}")
@@ -66,4 +76,9 @@ class RegisterViewModel @Inject constructor(
       }
     }
   }
+}
+private fun saveLocalManagerData(ruc: String, businessName: String, phone: String) {
+  // Guardar temporalmente los datos adicionales, si quieres usarlos más tarde.
+  // Por ejemplo, con DataStore, Room o simplemente loguearlos:
+  println("Datos adicionales -> RUC: $ruc, Razón Social: $businessName, Teléfono: $phone")
 }

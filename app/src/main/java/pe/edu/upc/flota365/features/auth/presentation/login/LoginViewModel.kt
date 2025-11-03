@@ -52,6 +52,7 @@ class LoginViewModel @Inject constructor(
         }
         is Resource.Error -> Error(result.message ?: "Error desconocido")
         is Resource.Loading<*> -> TODO()
+        is Resource.Idle<*> -> TODO()
       }
     }
   }

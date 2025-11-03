@@ -1,27 +1,22 @@
-// pe.edu.upc.flota365.features.auth.data.repositories.ManagerRepositoryImpl.kt
 package pe.edu.upc.flota365.features.auth.data.repositories
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pe.edu.upc.flota365.core.utils.Resource
-import pe.edu.upc.flota365.features.auth.data.remote.models.CreateManagerApiRequest
 import pe.edu.upc.flota365.features.auth.data.remote.models.ManagerRegisterRequestDto
-import pe.edu.upc.flota365.features.auth.data.remote.services.ManagerService
+import pe.edu.upc.flota365.features.auth.data.remote.services.AuthService
 import javax.inject.Inject
 
 class ManagerRepositoryImpl @Inject constructor(
-  private val service: ManagerService
+  private val authService: AuthService
 ) {
-
-  suspend fun registerManager(request: ManagerRegisterRequestDto): Resource<Unit> =
+  /**
+   * Registra un nuevo manager en el contexto de autenticación
+   */
+  suspend fun registerManagerAndUser(request: ManagerRegisterRequestDto): Resource<Unit> =
     withContext(Dispatchers.IO) {
       try {
-        val apiRequest = CreateManagerApiRequest(
-          name = "${request.firstName} ${request.lastName} - ${request.businessName}",
-          email = request.email
-        )
-
-        val response = service.createManager(apiRequest)
+        val response = authService.registerUser(request)
 
         if (response.isSuccessful) {
           Resource.Success(Unit)

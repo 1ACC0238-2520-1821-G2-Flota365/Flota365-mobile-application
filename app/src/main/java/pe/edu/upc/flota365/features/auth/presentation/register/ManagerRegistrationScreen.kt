@@ -22,13 +22,13 @@ fun ManagerRegistrationScreen(
 ) {
   val state by viewModel.state.collectAsState()
 
-  var firstName by rememberSaveable { mutableStateOf("") }
-  var lastName by rememberSaveable { mutableStateOf("") }
-  var ruc by rememberSaveable { mutableStateOf("") }
-  var businessName by rememberSaveable { mutableStateOf("") }
-  var email by rememberSaveable { mutableStateOf("") }
-  var phone by rememberSaveable { mutableStateOf("") }
-  var password by rememberSaveable { mutableStateOf("") }
+  var firstName by remember { mutableStateOf("") }
+  var lastName by remember { mutableStateOf("") }
+  var ruc by remember { mutableStateOf("") }
+  var businessName by remember { mutableStateOf("") }
+  var email by remember { mutableStateOf("") }
+  var phone by remember { mutableStateOf("") }
+  var password by remember { mutableStateOf("") }
 
   ScaffoldContainer(onBack = onBack, title = "Registro - Gestor") {
     Column(
@@ -70,13 +70,14 @@ fun ManagerRegistrationScreen(
       )
     }
 
-    when (state) {
+    when (val result = state) {
       is Resource.Success -> onContinue()
       is Resource.Error -> Text(
-        text = (state as Resource.Error).message ?: "Error desconocido",
+        text = result.message ?: "Error desconocido",
         color = MaterialTheme.colorScheme.error
       )
       is Resource.Loading -> Text(text = "Enviando registro...")
+      else -> {} // evita el "TODO()" que crasheaba
     }
   }
 }

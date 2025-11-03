@@ -22,4 +22,7 @@ interface AuthService {
 
   @GET("auth/profile")
   suspend fun getProfile(@Header("Authorization") token: String): Response<User>
+
+  @POST("auth/register")
+  suspend fun registerUser(@Body request: ManagerRegisterRequestDto): Response<Unit>
 }
