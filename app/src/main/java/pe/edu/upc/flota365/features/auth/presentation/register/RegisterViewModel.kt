@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import pe.edu.upc.flota365.features.auth.data.remote.models.*
 import pe.edu.upc.flota365.features.auth.domain.repositories.AuthRepository
+import pe.edu.upc.flota365.features.manager.data.remote.models.ManagerRegisterRequestDto
 import javax.inject.Inject
 
 @HiltViewModel

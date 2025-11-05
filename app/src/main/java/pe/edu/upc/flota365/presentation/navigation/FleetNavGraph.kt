@@ -17,9 +17,16 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import pe.edu.upc.flota365.features.auth.presentation.UserSession
-import pe.edu.upc.flota365.presentation.ui.gestor.*
 import pe.edu.upc.flota365.presentation.ui.profile.ProfileScreen
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.features.manager.presentation.DashboardScreen
+import pe.edu.upc.flota365.features.manager.presentation.driver.DriverFormMode
+import pe.edu.upc.flota365.features.manager.presentation.driver.DriverFormScreen
+import pe.edu.upc.flota365.features.manager.presentation.driver.DriverStatsScreen
+import pe.edu.upc.flota365.features.manager.presentation.driver.DriversListScreen
+import pe.edu.upc.flota365.features.manager.presentation.manager.FleetScreen
+import pe.edu.upc.flota365.features.manager.presentation.monitoring.MonitoringScreen
+import pe.edu.upc.flota365.features.manager.presentation.report.ReportsScreen
 
 /* ----------------------------- NAV GRAPH ----------------------------- */
 

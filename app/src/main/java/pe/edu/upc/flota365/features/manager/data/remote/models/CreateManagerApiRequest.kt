@@ -1,4 +1,4 @@
-package pe.edu.upc.flota365.features.auth.data.remote.models
+package pe.edu.upc.flota365.features.manager.data.remote.models
 
 data class CreateManagerApiRequest(
   val id: String? = null,

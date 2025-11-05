@@ -13,7 +13,7 @@ import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 import pe.edu.upc.flota365.core.utils.Resource
 import pe.edu.upc.flota365.features.auth.presentation.components.ScaffoldContainer
 import pe.edu.upc.flota365.features.auth.presentation.login.FlotaPrimaryButton
-import pe.edu.upc.flota365.features.auth.data.repositories.ManagerRepositoryImpl
+import pe.edu.upc.flota365.features.manager.data.repositories.ManagerRepositoryImpl
 @Composable
 fun ManagerRegistrationScreen(
   onBack: () -> Unit,

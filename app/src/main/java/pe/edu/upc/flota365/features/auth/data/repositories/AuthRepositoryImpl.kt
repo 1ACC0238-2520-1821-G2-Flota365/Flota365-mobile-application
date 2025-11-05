@@ -7,6 +7,7 @@ import pe.edu.upc.flota365.features.auth.data.remote.models.*
 import pe.edu.upc.flota365.features.auth.data.remote.services.AuthService
 import pe.edu.upc.flota365.features.auth.domain.models.User
 import pe.edu.upc.flota365.features.auth.domain.repositories.AuthRepository
+import pe.edu.upc.flota365.features.manager.data.remote.models.ManagerRegisterRequestDto
 import retrofit2.Response
 import javax.inject.Inject
 

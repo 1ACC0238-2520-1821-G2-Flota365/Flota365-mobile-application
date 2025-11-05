@@ -1,4 +1,4 @@
-package pe.edu.upc.flota365.presentation.ui.components
+package pe.edu.upc.flota365.features.manager.presentation.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
