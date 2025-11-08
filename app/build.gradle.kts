@@ -62,7 +62,8 @@ android {
 dependencies {
   implementation(libs.androidx.compose.runtime.saveable)
     implementation(libs.androidx.ui)
-    val composeBom = platform(libs.androidx.compose.bom)
+  implementation(libs.androidx.room.ktx)
+  val composeBom = platform(libs.androidx.compose.bom)
   implementation(composeBom)
   androidTestImplementation(composeBom)
 

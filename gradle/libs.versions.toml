@@ -24,6 +24,7 @@ ksp = "2.2.20-2.0.4"
 gson = "2.13.2"
 runtimeSaveable = "1.9.3"
 ui = "1.9.4"
+roomKtx = "2.8.3"
 
 [libraries]
 # AndroidX Core & Lifecycle
@@ -68,6 +69,7 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-runtime-saveable = { group = "androidx.compose.runtime", name = "runtime-saveable", version.ref = "runtimeSaveable" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

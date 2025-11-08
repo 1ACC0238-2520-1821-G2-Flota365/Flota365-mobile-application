@@ -8,28 +8,29 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.Button
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pe.edu.upc.flota365.features.manager.presentation.ui.AppScaffold
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.features.manager.presentation.ui.AppScaffold
 
 @Composable
 fun ReportsScreen(
-  onMenuClick: () -> Unit = {}
+  onMenuClick: () -> Unit = {},
+  viewModel: ReportsViewModel = hiltViewModel()
 ) {
+  val state = viewModel.uiState
+
+  // 🔁 Llamamos a la carga de reportes solo una vez al entrar
+  LaunchedEffect(Unit) {
+    viewModel.fetchReports()
+  }
+
   AppScaffold(
     title = "Reportes",
     onMenuClick = onMenuClick
@@ -41,15 +42,13 @@ fun ReportsScreen(
         .padding(horizontal = 16.dp, vertical = 12.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-
-      // Título grande
       Text(
         text = "Reportes",
         style = MaterialTheme.typography.headlineSmall,
         fontWeight = FontWeight.SemiBold
       )
 
-      // -------- Filtros de reporte --------
+      // --- Filtros (mantenemos tu diseño original) ---
       ElevatedCard(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
@@ -80,47 +79,68 @@ fun ReportsScreen(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
           ) {
-            Button(onClick = { /* TODO */ }) { Text("Generar reporte") }
+            Button(onClick = { /* TODO: Generar reporte */ }) { Text("Generar reporte") }
             Spacer(Modifier.width(10.dp))
-            OutlinedButton(onClick = { /* TODO */ }) { Text("Limpiar filtros") }
+            OutlinedButton(onClick = { /* TODO: Limpiar filtros */ }) { Text("Limpiar filtros") }
           }
         }
       }
 
-      // -------- Tabla de reportes recientes --------
+      // --- Lista de reportes ---
       Text(
         "Reportes recientes",
         style = MaterialTheme.typography.titleMedium,
         fontWeight = FontWeight.Medium
       )
 
-      ElevatedCard(
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
-      ) {
-        val scroll = rememberScrollState()
-
-        Column(Modifier.horizontalScroll(scroll)) {
-          // Header
-          Row(
-            modifier = Modifier
-              .fillMaxWidth()
-              .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
+      when {
+        state.isLoading -> {
+          CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+        }
+        state.error != null -> {
+          Text(
+            text = "Error: ${state.error}",
+            color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+          )
+        }
+        state.reports.isEmpty() -> {
+          Text("No hay reportes disponibles")
+        }
+        else -> {
+          ElevatedCard(
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
           ) {
-            TableHeaderCell("Nombre", 0.28f)
-            TableHeaderCell("Tipo", 0.18f)
-            TableHeaderCell("Fecha de creación", 0.27f)
-            TableHeaderCell("Creado por", 0.27f)
+            val scroll = rememberScrollState()
+
+            Column(Modifier.horizontalScroll(scroll)) {
+              // Encabezado
+              Row(
+                modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(horizontal = 12.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+              ) {
+                TableHeaderCell("Nombre", 0.28f)
+                TableHeaderCell("Tipo", 0.18f)
+                TableHeaderCell("Fecha de creación", 0.27f)
+                TableHeaderCell("Creado por", 0.27f)
+              }
+
+              Divider(thickness = 0.dp, color = MaterialTheme.colorScheme.primary)
+
+              state.reports.forEach { report ->
+                ReportRow(
+                  nombre = report.name,
+                  tipo = report.type,
+                  fecha = report.createdAt,
+                  autor = report.createdBy
+                )
+                Divider()
+              }
+            }
           }
-
-          Divider(thickness = 0.dp, color = MaterialTheme.colorScheme.primary)
-
-          ReportRow("Combustible", "mensual", "04/10/2025", "Juan Perez")
-          Divider()
-          ReportRow("Rendimiento", "semanal", "04/10/2025", "Juan Perez")
-          Divider()
-          ReportRow("Incidencias", "diario", "04/10/2025", "Juan Perez")
         }
       }
     }
@@ -157,11 +177,7 @@ private fun LabeledDateRange(label: String) {
 
 @Composable
 private fun TableHeaderCell(text: String, weight: Float) {
-  Box(
-    Modifier
-
-      .padding(end = 8.dp)
-  ) {
+  Box(Modifier.padding(end = 8.dp)) {
     Text(
       text = text,
       style = MaterialTheme.typography.labelLarge,
@@ -196,10 +212,7 @@ private fun ReportRow(
 
 @Composable
 private fun BodyCell(text: String, weight: Float) {
-  Box(
-    Modifier
-      .padding(end = 8.dp)
-  ) {
+  Box(Modifier.padding(end = 8.dp)) {
     Text(text = text, style = MaterialTheme.typography.bodyMedium)
   }
 }
