@@ -132,9 +132,9 @@ fun ReportsScreen(
 
               state.reports.forEach { report ->
                 ReportRow(
-                  nombre = report.name,
+                  nombre = report.title,
                   tipo = report.type,
-                  fecha = report.createdAt,
+                  fecha = report.generatedAt,
                   autor = report.createdBy
                 )
                 Divider()
@@ -192,10 +192,10 @@ private fun TableHeaderCell(text: String, weight: Float) {
 
 @Composable
 private fun ReportRow(
-  nombre: String,
-  tipo: String,
-  fecha: String,
-  autor: String
+  nombre: String?,
+  tipo: String?,
+  fecha: String?,
+  autor: String?
 ) {
   Row(
     modifier = Modifier
@@ -203,10 +203,10 @@ private fun ReportRow(
       .padding(horizontal = 12.dp, vertical = 10.dp),
     verticalAlignment = Alignment.CenterVertically
   ) {
-    BodyCell(nombre, 0.28f)
-    BodyCell(tipo, 0.18f)
-    BodyCell(fecha, 0.27f)
-    BodyCell(autor, 0.27f)
+    BodyCell(nombre ?:"", 0.28f)
+    BodyCell(tipo ?:"", 0.18f)
+    BodyCell(fecha ?:"", 0.27f)
+    BodyCell(autor ?:"" , 0.27f)
   }
 }
 
