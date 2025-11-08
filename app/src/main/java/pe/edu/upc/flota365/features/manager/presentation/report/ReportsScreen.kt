@@ -16,7 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.core.utils.Resource
 import pe.edu.upc.flota365.features.manager.presentation.ui.AppScaffold
 
 @Composable
@@ -25,15 +27,18 @@ fun ReportsScreen(
   viewModel: ReportsViewModel = hiltViewModel()
 ) {
   val state = viewModel.uiState
+  val snackbarHostState = remember { SnackbarHostState() }
+  val scope = rememberCoroutineScope()
 
-  // 🔁 Llamamos a la carga de reportes solo una vez al entrar
+  // 🔁 Carga inicial
   LaunchedEffect(Unit) {
     viewModel.fetchReports()
   }
 
   AppScaffold(
     title = "Reportes",
-    onMenuClick = onMenuClick
+    onMenuClick = onMenuClick,
+    snackbarHostState = snackbarHostState
   ) { pad ->
     Column(
       Modifier
@@ -48,7 +53,7 @@ fun ReportsScreen(
         fontWeight = FontWeight.SemiBold
       )
 
-      // --- Filtros (mantenemos tu diseño original) ---
+      // --- Filtros ---
       ElevatedCard(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
@@ -79,9 +84,26 @@ fun ReportsScreen(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
           ) {
-            Button(onClick = { /* TODO: Generar reporte */ }) { Text("Generar reporte") }
+            // ✅ BOTÓN PARA GENERAR REPORTE
+            Button(
+              onClick = {
+                scope.launch {
+                  val result = viewModel.createReport()
+                  val message = when (result) {
+                    is Resource.Success -> result.data ?: "Reporte generado correctamente"
+                    is Resource.Error -> result.message ?: "Error al generar reporte"
+                    else -> "Error desconocido"
+                  }
+                  snackbarHostState.showSnackbar(message)
+                  viewModel.fetchReports() // 🔁 Recarga la lista
+                }
+              }
+            ) { Text("Generar reporte") }
+
             Spacer(Modifier.width(10.dp))
-            OutlinedButton(onClick = { /* TODO: Limpiar filtros */ }) { Text("Limpiar filtros") }
+            OutlinedButton(onClick = { /* TODO: Limpiar filtros */ }) {
+              Text("Limpiar filtros")
+            }
           }
         }
       }
@@ -94,28 +116,20 @@ fun ReportsScreen(
       )
 
       when {
-        state.isLoading -> {
-          CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
-        }
-        state.error != null -> {
-          Text(
-            text = "Error: ${state.error}",
-            color = MaterialTheme.colorScheme.error,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-          )
-        }
-        state.reports.isEmpty() -> {
-          Text("No hay reportes disponibles")
-        }
+        state.isLoading -> CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+        state.error != null -> Text(
+          text = "Error: ${state.error}",
+          color = MaterialTheme.colorScheme.error,
+          modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        state.reports.isEmpty() -> Text("No hay reportes disponibles")
         else -> {
           ElevatedCard(
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
           ) {
             val scroll = rememberScrollState()
-
             Column(Modifier.horizontalScroll(scroll)) {
-              // Encabezado
               Row(
                 modifier = Modifier
                   .fillMaxWidth()
@@ -150,7 +164,7 @@ fun ReportsScreen(
 /* ---------- Reusables ---------- */
 
 @Composable
-private fun LabeledDropdown(label: String) {
+fun LabeledDropdown(label: String) {
   OutlinedTextField(
     value = "",
     onValueChange = {},
@@ -163,7 +177,7 @@ private fun LabeledDropdown(label: String) {
 }
 
 @Composable
-private fun LabeledDateRange(label: String) {
+fun LabeledDateRange(label: String) {
   OutlinedTextField(
     value = "",
     onValueChange = {},
@@ -176,7 +190,7 @@ private fun LabeledDateRange(label: String) {
 }
 
 @Composable
-private fun TableHeaderCell(text: String, weight: Float) {
+fun TableHeaderCell(text: String, weight: Float) {
   Box(Modifier.padding(end = 8.dp)) {
     Text(
       text = text,
@@ -191,7 +205,7 @@ private fun TableHeaderCell(text: String, weight: Float) {
 }
 
 @Composable
-private fun ReportRow(
+fun ReportRow(
   nombre: String?,
   tipo: String?,
   fecha: String?,
@@ -203,15 +217,15 @@ private fun ReportRow(
       .padding(horizontal = 12.dp, vertical = 10.dp),
     verticalAlignment = Alignment.CenterVertically
   ) {
-    BodyCell(nombre ?:"", 0.28f)
-    BodyCell(tipo ?:"", 0.18f)
-    BodyCell(fecha ?:"", 0.27f)
-    BodyCell(autor ?:"" , 0.27f)
+    BodyCell(nombre ?: "", 0.28f)
+    BodyCell(tipo ?: "", 0.18f)
+    BodyCell(fecha ?: "", 0.27f)
+    BodyCell(autor ?: "", 0.27f)
   }
 }
 
 @Composable
-private fun BodyCell(text: String, weight: Float) {
+fun BodyCell(text: String, weight: Float) {
   Box(Modifier.padding(end = 8.dp)) {
     Text(text = text, style = MaterialTheme.typography.bodyMedium)
   }
@@ -219,6 +233,6 @@ private fun BodyCell(text: String, weight: Float) {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-private fun ReportsScreenPreview() {
+fun ReportsScreenPreview() {
   FlotaTheme { ReportsScreen() }
 }

@@ -9,8 +9,7 @@ data class Report(
 )
 data class CreateReportRequest(
   val title: String,
-  val description: String?,
-  val managerId: Int?,
-  val fleetId: Int?,
-  val vehicleId: Int?
+  val type: String,
+  val generatedAt: String,
+  val createdBy: String?
 )

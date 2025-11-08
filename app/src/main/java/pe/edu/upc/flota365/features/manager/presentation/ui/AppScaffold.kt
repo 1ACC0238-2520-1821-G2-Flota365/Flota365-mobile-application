@@ -12,7 +12,7 @@ import pe.edu.upc.flota365.features.auth.presentation.UserSession
 
 /**
  * Scaffold base con TopAppBar que muestra el ícono de menú y saludo del usuario.
- * Incluye botón de cerrar sesión.
+ * Incluye botón de cerrar sesión y soporte para Snackbars.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -20,6 +20,7 @@ fun AppScaffold(
   title: String,
   onMenuClick: () -> Unit,
   onLogout: () -> Unit = {},
+  snackbarHostState: SnackbarHostState? = null,
   content: @Composable (PaddingValues) -> Unit
 ) {
   val user = UserSession.currentUser
@@ -53,6 +54,9 @@ fun AppScaffold(
         },
         colors = TopAppBarDefaults.topAppBarColors()
       )
+    },
+    snackbarHost = {
+      snackbarHostState?.let { SnackbarHost(it) }
     }
   ) { innerPadding ->
     content(innerPadding)

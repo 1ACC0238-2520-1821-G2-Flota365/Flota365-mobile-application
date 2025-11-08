@@ -113,6 +113,5 @@ interface ManagerService {
   @GET("Report")
   suspend fun getReports(): Response<List<Report>>
 
-  @POST("Report")
-  suspend fun createReport(@Body request: CreateReportRequest): Response<Unit>
-}
+  @POST("reports")
+  suspend fun postReport(@Body request: CreateReportRequest): Response<Unit>}

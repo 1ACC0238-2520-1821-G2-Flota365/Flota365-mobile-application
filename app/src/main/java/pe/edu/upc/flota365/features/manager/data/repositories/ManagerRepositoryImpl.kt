@@ -112,9 +112,19 @@ class ManagerRepositoryImpl @Inject constructor(
   suspend fun getReports(): Resource<List<Report>> =
     safeApiCall { managerService.getReports() }
 
-  suspend fun createReport(request: CreateReportRequest): Resource<Unit> =
-    safeApiCall { managerService.createReport(request) }
-
+  suspend fun createReport(request: CreateReportRequest): Resource<String> =
+    withContext(Dispatchers.IO) {
+      try {
+        val response = managerService.postReport(request)
+        if (response.isSuccessful) {
+          Resource.Success("Reporte generado correctamente")
+        } else {
+          Resource.Error("Error al generar reporte: ${response.code()} ${response.message()}")
+        }
+      } catch (e: Exception) {
+        Resource.Error(e.localizedMessage ?: "Error desconocido")
+      }
+    }
   // --- MÉTODO GENÉRICO ---
   private suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Resource<T> =
     withContext(Dispatchers.IO) {
