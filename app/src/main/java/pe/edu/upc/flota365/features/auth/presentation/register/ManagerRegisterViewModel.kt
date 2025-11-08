@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pe.edu.upc.flota365.core.utils.Resource
-import pe.edu.upc.flota365.features.auth.data.remote.models.ManagerRegisterRequestDto
+import pe.edu.upc.flota365.features.manager.data.remote.models.ManagerRegisterRequestDto
 import pe.edu.upc.flota365.features.auth.data.remote.models.RegisterUserRequest
-import pe.edu.upc.flota365.features.auth.data.repositories.ManagerRepositoryImpl
+import pe.edu.upc.flota365.features.manager.data.repositories.ManagerRepositoryImpl
 import javax.inject.Inject
 
 @HiltViewModel

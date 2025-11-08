@@ -48,6 +48,7 @@ fun SubscriptionPlanScreen(
   onSelectPlan: (SubscriptionPlan) -> Unit
 ) {
   val colorScheme = MaterialTheme.colorScheme
+
   val plans = listOf(
     SubscriptionPlan(
       name = "Plan Free",
@@ -63,6 +64,7 @@ fun SubscriptionPlanScreen(
     )
   )
 
+  // ✅ Solución: usar Saver personalizado para guardar objetos complejos
   var selectedPlan by rememberSaveable(stateSaver = SubscriptionPlanSaver) {
     mutableStateOf(plans.last())
   }
@@ -93,7 +95,7 @@ fun SubscriptionPlanScreen(
   }
 }
 
-@Preview(showBackground = true, showSystemUi = true, name = "Subscription Plan Screen")
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewSubscriptionPlanScreen() {
   FlotaTheme {

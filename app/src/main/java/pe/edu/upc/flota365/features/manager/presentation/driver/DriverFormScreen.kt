@@ -1,4 +1,4 @@
-package pe.edu.upc.flota365.presentation.ui.gestor
+package pe.edu.upc.flota365.features.manager.presentation.driver
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -6,7 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pe.edu.upc.flota365.presentation.ui.components.SectionTitle
+import pe.edu.upc.flota365.features.manager.presentation.ui.SectionTitle
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 
 enum class DriverFormMode { Create, Edit }

@@ -1,4 +1,4 @@
-package pe.edu.upc.flota365.presentation.ui.gestor
+package pe.edu.upc.flota365.features.manager.presentation.driver
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons

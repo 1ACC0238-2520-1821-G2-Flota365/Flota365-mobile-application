@@ -1,4 +1,4 @@
-package pe.edu.upc.flota365.presentation.ui.gestor
+package pe.edu.upc.flota365.features.manager.presentation.manager
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pe.edu.upc.flota365.presentation.ui.components.AppScaffold
+import pe.edu.upc.flota365.features.manager.presentation.ui.AppScaffold
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 
 @Composable

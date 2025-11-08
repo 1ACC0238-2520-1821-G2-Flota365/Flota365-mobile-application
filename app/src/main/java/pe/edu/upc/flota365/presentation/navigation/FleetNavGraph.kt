@@ -17,9 +17,30 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import pe.edu.upc.flota365.features.auth.presentation.UserSession
-import pe.edu.upc.flota365.presentation.ui.gestor.*
 import pe.edu.upc.flota365.presentation.ui.profile.ProfileScreen
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.features.manager.presentation.DashboardScreen
+import pe.edu.upc.flota365.features.manager.presentation.driver.DriverFormMode
+import pe.edu.upc.flota365.features.manager.presentation.driver.DriverFormScreen
+import pe.edu.upc.flota365.features.manager.presentation.driver.DriverStatsScreen
+import pe.edu.upc.flota365.features.manager.presentation.driver.DriversListScreen
+import pe.edu.upc.flota365.features.manager.presentation.manager.FleetScreen
+import pe.edu.upc.flota365.features.manager.presentation.monitoring.MonitoringScreen
+import pe.edu.upc.flota365.features.manager.presentation.report.ReportsScreen
+
+/* ----------------------------- NAV DESTINATIONS ----------------------------- */
+
+object NavDestinations {
+  const val DASHBOARD = "dashboard"
+  const val DRIVERS = "drivers"
+  const val DRIVER_CREATE = "driver_create"
+  const val DRIVER_EDIT = "driver_edit"
+  const val DRIVER_STATS = "driver_stats"
+  const val FLEET = "fleet"
+  const val REPORTS = "reports"
+  const val MONITORING = "monitoring"
+  const val PROFILE = "profile"
+}
 
 /* ----------------------------- NAV GRAPH ----------------------------- */
 
@@ -34,16 +55,6 @@ fun FleetNavGraph(rootNavController: NavHostController) {
     drawerContent = {
       ModalDrawerSheet {
         DrawerHeader()
-
-        NavigationDrawerItem(
-          label = { Text("Usuario") },
-          selected = false,
-          onClick = {
-            navController.navigate(NavDestinations.PROFILE)
-            scope.launch { drawerState.close() }
-          },
-          icon = { Icon(Icons.Filled.Person, null) }
-        )
 
         NavigationDrawerItem(
           label = { Text("Dashboard") },
@@ -76,6 +87,16 @@ fun FleetNavGraph(rootNavController: NavHostController) {
         )
 
         NavigationDrawerItem(
+          label = { Text("Monitoreo") },
+          selected = false,
+          onClick = {
+            navController.navigate(NavDestinations.MONITORING)
+            scope.launch { drawerState.close() }
+          },
+          icon = { Icon(Icons.Filled.Map, null) }
+        )
+
+        NavigationDrawerItem(
           label = { Text("Reportes") },
           selected = false,
           onClick = {
@@ -86,19 +107,17 @@ fun FleetNavGraph(rootNavController: NavHostController) {
         )
 
         NavigationDrawerItem(
-          label = { Text("Monitoreo") },
+          label = { Text("Perfil") },
           selected = false,
           onClick = {
-            navController.navigate(NavDestinations.MONITORING)
+            navController.navigate(NavDestinations.PROFILE)
             scope.launch { drawerState.close() }
           },
-          icon = { Icon(Icons.Filled.Map, null) }
+          icon = { Icon(Icons.Filled.Person, null) }
         )
 
         Spacer(Modifier.height(12.dp))
         Divider()
-
-        // ✅ Botón de cerrar sesión
         DrawerLogoutRow(scope, drawerState, rootNavController)
       }
     }
@@ -107,6 +126,7 @@ fun FleetNavGraph(rootNavController: NavHostController) {
       navController = navController,
       startDestination = NavDestinations.DASHBOARD
     ) {
+
       composable(NavDestinations.DASHBOARD) {
         DashboardScreen(onMenuClick = { scope.launch { drawerState.open() } })
       }
@@ -123,15 +143,22 @@ fun FleetNavGraph(rootNavController: NavHostController) {
       composable(NavDestinations.DRIVER_CREATE) {
         DriverFormScreen(DriverFormMode.Create)
       }
+
       composable(NavDestinations.DRIVER_EDIT) {
         DriverFormScreen(DriverFormMode.Edit)
       }
+
       composable(NavDestinations.DRIVER_STATS) {
         DriverStatsScreen()
       }
 
-      composable(NavDestinations.REPORTS) { ReportsScreen() }
-      composable(NavDestinations.FLEET) { FleetScreen() }
+      composable(NavDestinations.FLEET) {
+        FleetScreen()
+      }
+
+      composable(NavDestinations.REPORTS) {
+        ReportsScreen()
+      }
 
       composable(NavDestinations.MONITORING) {
         MonitoringScreen(onMenuClick = { scope.launch { drawerState.open() } })
@@ -144,7 +171,7 @@ fun FleetNavGraph(rootNavController: NavHostController) {
   }
 }
 
-/* ----------------------------- Drawer UI ----------------------------- */
+/* ----------------------------- Drawer Header ----------------------------- */
 
 @Composable
 fun DrawerHeader() {
@@ -176,6 +203,8 @@ fun DrawerHeader() {
     )
   }
 }
+
+/* ----------------------------- Logout Button ----------------------------- */
 
 @Composable
 private fun DrawerLogoutRow(

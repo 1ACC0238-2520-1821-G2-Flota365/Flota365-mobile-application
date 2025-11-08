@@ -9,7 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import pe.edu.upc.flota365.features.auth.data.remote.services.AuthService
-import pe.edu.upc.flota365.features.auth.data.remote.services.ManagerService
+import pe.edu.upc.flota365.features.manager.data.remote.services.ManagerService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
