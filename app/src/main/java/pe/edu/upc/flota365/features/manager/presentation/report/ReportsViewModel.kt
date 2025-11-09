@@ -34,19 +34,12 @@ class ReportsViewModel @Inject constructor(
     }
   }
 
-  suspend fun createReport(): Resource<String> =
+  suspend fun createReport(request: CreateReportRequest): Resource<String> =
     withContext(Dispatchers.IO) {
       try {
-        val newReport = CreateReportRequest(
-          title = "Consumo de combustible - Noviembre",
-          type = "Combustible",
-          generatedAt = "2025-11-08T12:00:00Z",
-          createdBy = "Administrador"
-        )
-
-        when (val result = repository.createReport(newReport)) {
+        when (val result = repository.createReport(request)) {
           is Resource.Success -> {
-            fetchReports() // 🔁 refresca la lista
+            fetchReports()
             Resource.Success("Reporte generado correctamente")
           }
           is Resource.Error -> Resource.Error(result.message ?: "Error al generar reporte")

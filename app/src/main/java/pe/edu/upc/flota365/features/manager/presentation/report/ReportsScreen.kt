@@ -24,6 +24,7 @@ import pe.edu.upc.flota365.features.manager.presentation.ui.AppScaffold
 @Composable
 fun ReportsScreen(
   onMenuClick: () -> Unit = {},
+  onNavigateToCreate: () -> Unit = {},
   viewModel: ReportsViewModel = hiltViewModel()
 ) {
   val state = viewModel.uiState
@@ -85,21 +86,9 @@ fun ReportsScreen(
             horizontalArrangement = Arrangement.End
           ) {
             // ✅ BOTÓN PARA GENERAR REPORTE
-            Button(
-              onClick = {
-                scope.launch {
-                  val result = viewModel.createReport()
-                  val message = when (result) {
-                    is Resource.Success -> result.data ?: "Reporte generado correctamente"
-                    is Resource.Error -> result.message ?: "Error al generar reporte"
-                    else -> "Error desconocido"
-                  }
-                  snackbarHostState.showSnackbar(message)
-                  viewModel.fetchReports() // 🔁 Recarga la lista
-                }
-              }
-            ) { Text("Generar reporte") }
-
+            Button(onClick = { onNavigateToCreate() }) {
+              Text("Generar reporte")
+            }
             Spacer(Modifier.width(10.dp))
             OutlinedButton(onClick = { /* TODO: Limpiar filtros */ }) {
               Text("Limpiar filtros")

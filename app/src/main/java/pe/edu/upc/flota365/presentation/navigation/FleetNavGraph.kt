@@ -1,5 +1,7 @@
 package pe.edu.upc.flota365.presentation.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -26,10 +28,10 @@ import pe.edu.upc.flota365.features.manager.presentation.driver.DriverStatsScree
 import pe.edu.upc.flota365.features.manager.presentation.driver.DriversListScreen
 import pe.edu.upc.flota365.features.manager.presentation.manager.FleetScreen
 import pe.edu.upc.flota365.features.manager.presentation.monitoring.MonitoringScreen
+import pe.edu.upc.flota365.features.manager.presentation.report.CreateReportScreen
 import pe.edu.upc.flota365.features.manager.presentation.report.ReportsScreen
 
 /* ----------------------------- NAV DESTINATIONS ----------------------------- */
-
 object NavDestinations {
   const val DASHBOARD = "dashboard"
   const val DRIVERS = "drivers"
@@ -40,10 +42,12 @@ object NavDestinations {
   const val REPORTS = "reports"
   const val MONITORING = "monitoring"
   const val PROFILE = "profile"
+
+  const val REPORT_CREATE = "report_create"
 }
 
 /* ----------------------------- NAV GRAPH ----------------------------- */
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FleetNavGraph(rootNavController: NavHostController) {
   val navController = rememberNavController()
@@ -56,65 +60,27 @@ fun FleetNavGraph(rootNavController: NavHostController) {
       ModalDrawerSheet {
         DrawerHeader()
 
-        NavigationDrawerItem(
-          label = { Text("Dashboard") },
-          selected = false,
-          onClick = {
-            navController.navigate(NavDestinations.DASHBOARD)
-            scope.launch { drawerState.close() }
-          },
-          icon = { Icon(Icons.Filled.Home, null) }
+        // Items del menú lateral
+        val drawerItems = listOf(
+          Triple("Dashboard", Icons.Filled.Home, NavDestinations.DASHBOARD),
+          Triple("Conductores", Icons.Filled.List, NavDestinations.DRIVERS),
+          Triple("Gestión de flota", Icons.Filled.DirectionsCar, NavDestinations.FLEET),
+          Triple("Monitoreo", Icons.Filled.Map, NavDestinations.MONITORING),
+          Triple("Reportes", Icons.Filled.Assessment, NavDestinations.REPORTS),
+          Triple("Perfil", Icons.Filled.Person, NavDestinations.PROFILE),
         )
 
-        NavigationDrawerItem(
-          label = { Text("Conductores") },
-          selected = false,
-          onClick = {
-            navController.navigate(NavDestinations.DRIVERS)
-            scope.launch { drawerState.close() }
-          },
-          icon = { Icon(Icons.Filled.List, null) }
-        )
-
-        NavigationDrawerItem(
-          label = { Text("Gestión de flota") },
-          selected = false,
-          onClick = {
-            navController.navigate(NavDestinations.FLEET)
-            scope.launch { drawerState.close() }
-          },
-          icon = { Icon(Icons.Filled.DirectionsCar, null) }
-        )
-
-        NavigationDrawerItem(
-          label = { Text("Monitoreo") },
-          selected = false,
-          onClick = {
-            navController.navigate(NavDestinations.MONITORING)
-            scope.launch { drawerState.close() }
-          },
-          icon = { Icon(Icons.Filled.Map, null) }
-        )
-
-        NavigationDrawerItem(
-          label = { Text("Reportes") },
-          selected = false,
-          onClick = {
-            navController.navigate(NavDestinations.REPORTS)
-            scope.launch { drawerState.close() }
-          },
-          icon = { Icon(Icons.Filled.Assessment, null) }
-        )
-
-        NavigationDrawerItem(
-          label = { Text("Perfil") },
-          selected = false,
-          onClick = {
-            navController.navigate(NavDestinations.PROFILE)
-            scope.launch { drawerState.close() }
-          },
-          icon = { Icon(Icons.Filled.Person, null) }
-        )
+        drawerItems.forEach { (label, icon, route) ->
+          NavigationDrawerItem(
+            label = { Text(label) },
+            selected = false,
+            onClick = {
+              navController.navigate(route)
+              scope.launch { drawerState.close() }
+            },
+            icon = { Icon(icon, null) }
+          )
+        }
 
         Spacer(Modifier.height(12.dp))
         Divider()
@@ -157,7 +123,9 @@ fun FleetNavGraph(rootNavController: NavHostController) {
       }
 
       composable(NavDestinations.REPORTS) {
-        ReportsScreen()
+        ReportsScreen(
+          onNavigateToCreate = { navController.navigate(NavDestinations.REPORT_CREATE) }
+        )
       }
 
       composable(NavDestinations.MONITORING) {
@@ -167,12 +135,22 @@ fun FleetNavGraph(rootNavController: NavHostController) {
       composable(NavDestinations.PROFILE) {
         ProfileScreen()
       }
+
+      composable(NavDestinations.REPORT_CREATE) {
+        CreateReportScreen(
+          onReportCreated = {
+            navController.popBackStack() // vuelve a ReportsScreen
+          },
+          onCancel = {
+            navController.popBackStack()
+          }
+        )
+      }
     }
   }
 }
 
 /* ----------------------------- Drawer Header ----------------------------- */
-
 @Composable
 fun DrawerHeader() {
   val user = UserSession.currentUser
@@ -205,7 +183,6 @@ fun DrawerHeader() {
 }
 
 /* ----------------------------- Logout Button ----------------------------- */
-
 @Composable
 private fun DrawerLogoutRow(
   scope: CoroutineScope,
@@ -254,7 +231,7 @@ private fun DrawerLogoutRow(
 }
 
 /* ----------------------------- Preview ----------------------------- */
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun FleetNavGraphPreview() {
