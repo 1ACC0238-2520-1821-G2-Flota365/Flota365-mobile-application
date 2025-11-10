@@ -1,20 +1,21 @@
-package pe.edu.upc.flota365.presentation.navigation
+package pe.edu.upc.flota365.features.auth.presentation.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.tooling.preview.Preview
-import pe.edu.upc.flota365.features.auth.presentation.register.DriverRegistrationScreen
 import pe.edu.upc.flota365.features.auth.presentation.register.ManagerRegistrationScreen
 import pe.edu.upc.flota365.features.auth.presentation.login.LoginFormScreen
 import pe.edu.upc.flota365.features.auth.presentation.login.LoginWelcomeScreen
 import pe.edu.upc.flota365.features.auth.presentation.OnboardingScreen
-import pe.edu.upc.flota365.features.auth.presentation.RoleSelectionScreen
 import pe.edu.upc.flota365.features.auth.presentation.PaymentInformationScreen
 import pe.edu.upc.flota365.features.auth.presentation.SubscriptionPlanScreen
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.features.manager.presentation.navigation.FleetNavGraph
 
 sealed class AppDestination(val route: String) {
   data object Onboarding : AppDestination("onboarding")
@@ -28,6 +29,7 @@ sealed class AppDestination(val route: String) {
   data object FleetMain : AppDestination("fleet_main")
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
   NavHost(
@@ -108,6 +110,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
   }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewAppNavHost() {

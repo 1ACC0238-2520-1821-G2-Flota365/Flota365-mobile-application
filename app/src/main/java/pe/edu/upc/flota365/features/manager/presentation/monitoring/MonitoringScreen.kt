@@ -25,17 +25,6 @@ import pe.edu.upc.flota365.features.manager.presentation.event.ManagerUiEvent
 import pe.edu.upc.flota365.features.manager.presentation.viewmodel.ManagerViewModel
 
 /* =======================
-   Model
-   ======================= */
-data class MonitoringVehicleUi(
-  val plate: String,
-  val model: String,
-  val driver: String,
-  val status: String = "Activo",
-  @DrawableRes val mapImage: Int? = null
-)
-
-/* =======================
    Screen
    ======================= */
 @Composable

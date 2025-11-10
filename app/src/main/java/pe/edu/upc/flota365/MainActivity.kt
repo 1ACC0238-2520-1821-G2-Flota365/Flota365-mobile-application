@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Surface
 import dagger.hilt.android.AndroidEntryPoint
-import pe.edu.upc.flota365.presentation.navigation.AppNavHost
+import pe.edu.upc.flota365.features.auth.presentation.navigation.AppNavHost
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
 
 @AndroidEntryPoint

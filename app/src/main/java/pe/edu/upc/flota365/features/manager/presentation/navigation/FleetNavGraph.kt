@@ -1,4 +1,4 @@
-package pe.edu.upc.flota365.presentation.navigation
+package pe.edu.upc.flota365.features.manager.presentation.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -147,7 +148,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 /* ----------------------------- Helper ----------------------------- */
 data class BottomNavItem(
   val label: String,
-  val icon: androidx.compose.ui.graphics.vector.ImageVector,
+  val icon: ImageVector,
   val route: String
 )
 
