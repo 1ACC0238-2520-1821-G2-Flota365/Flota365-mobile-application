@@ -20,6 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pe.edu.upc.flota365.features.manager.presentation.ui.AppScaffold
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.features.manager.data.remote.models.ActiveVehicleDto
+import pe.edu.upc.flota365.features.manager.presentation.event.ManagerUiEvent
+import pe.edu.upc.flota365.features.manager.presentation.viewmodel.ManagerViewModel
 
 /* =======================
    Model
@@ -37,17 +40,14 @@ data class MonitoringVehicleUi(
    ======================= */
 @Composable
 fun MonitoringScreen(
+  viewModel: ManagerViewModel,
   onMenuClick: () -> Unit = {}
 ) {
-  // demo data
-  val vehicles = remember {
-    List(6) {
-      MonitoringVehicleUi(
-        plate = "Placa: ABC - 123",
-        model = "Modelo: Toyota Hilux 2023",
-        driver = "Conductor: Carlos Méndez"
-      )
-    }
+  val state = viewModel.uiState
+
+  // 🔹 Cargar datos del backend al entrar a la pantalla
+  LaunchedEffect(Unit) {
+    viewModel.onEvent(ManagerUiEvent.LoadDashboard)
   }
 
   AppScaffold(
@@ -62,19 +62,16 @@ fun MonitoringScreen(
       verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
 
-      // título grande
       Text(
         "Monitoreo de Flota:",
         style = MaterialTheme.typography.headlineSmall,
         fontWeight = FontWeight.SemiBold
       )
 
-      // Tarjeta con mapa (imagen o placeholder)
+      // 🗺️ Mapa o placeholder
       ElevatedCard(shape = RoundedCornerShape(16.dp)) {
         Column(Modifier.padding(12.dp)) {
           MapPreview(
-            // si tienes un drawable del mapa, pásalo aquí:
-            // imageRes = R.drawable.mock_map
             imageRes = null,
             modifier = Modifier
               .fillMaxWidth()
@@ -89,19 +86,38 @@ fun MonitoringScreen(
         }
       }
 
-      // Lista de vehículos
-      ElevatedCard(shape = RoundedCornerShape(16.dp)) {
-        Column(Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
-          vehicles.forEachIndexed { index, v ->
-            VehicleMonitorRow(
-              plate = v.plate,
-              model = v.model,
-              driver = v.driver,
-              status = v.status,
-              onMore = { /* abrir menú contextual si quieres */ }
-            )
-            if (index != vehicles.lastIndex) Divider()
+      // 🔹 Mostrar estado de carga, error o datos
+      when {
+        state.isLoading -> {
+          Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
           }
+        }
+
+        state.error != null -> {
+          Text("Error: ${state.error}", color = MaterialTheme.colorScheme.error)
+        }
+
+        state.activeVehicles.isNotEmpty() -> {
+          // 🔹 Lista real de vehículos del backend
+          ElevatedCard(shape = RoundedCornerShape(16.dp)) {
+            Column(Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
+              state.activeVehicles.forEachIndexed { index, v ->
+                VehicleMonitorRow(
+                  plate = "Placa: ${v.licensePlate}",
+                  model = "Modelo: ${v.brand ?: "N/A"} ${v.model ?: ""}",
+                  driver = "Conductor: ${v.driverName ?: "No asignado"}",
+                  status = v.statusName ?: "Desconocido",
+                  onMore = { /* acciones futuras */ }
+                )
+                if (index != state.activeVehicles.lastIndex) Divider()
+              }
+            }
+          }
+        }
+
+        else -> {
+          Text("No hay vehículos activos en este momento.")
         }
       }
     }
@@ -124,7 +140,6 @@ private fun MapPreview(
       modifier = modifier.clip(RoundedCornerShape(12.dp))
     )
   } else {
-    // Placeholder con degradado (se parece al mock)
     Box(
       modifier
         .clip(RoundedCornerShape(12.dp))
@@ -157,7 +172,7 @@ private fun VehicleMonitorRow(
       .padding(horizontal = 6.dp, vertical = 10.dp),
     verticalAlignment = Alignment.CenterVertically
   ) {
-    // ícono del vehículo
+    // 🚗 Ícono del vehículo
     Surface(
       tonalElevation = 2.dp,
       shape = MaterialTheme.shapes.medium,
@@ -174,7 +189,7 @@ private fun VehicleMonitorRow(
 
     Spacer(Modifier.width(12.dp))
 
-    // texto + pill de estado
+    // 📋 Texto + estado
     Column(Modifier.weight(1f)) {
       Row(verticalAlignment = Alignment.CenterVertically) {
         Text(plate, style = MaterialTheme.typography.titleSmall)
@@ -185,7 +200,7 @@ private fun VehicleMonitorRow(
       Text(driver, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 
-    // menú ⋮
+    // ⋮ Menú contextual
     var expanded by remember { mutableStateOf(false) }
     Box {
       IconButton(onClick = { expanded = true }) {
@@ -218,5 +233,9 @@ private fun StatusPill(label: String) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun MonitoringScreenPreview() {
-  FlotaTheme { MonitoringScreen() }
+  FlotaTheme {
+    // En el preview no se pasa un ViewModel real
+    // MonitoringScreen(viewModel = FakeViewModel())
+    Text("Vista previa de Monitoreo")
+  }
 }

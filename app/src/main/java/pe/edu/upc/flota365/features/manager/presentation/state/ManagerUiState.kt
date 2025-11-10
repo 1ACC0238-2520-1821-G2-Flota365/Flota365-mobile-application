@@ -8,7 +8,7 @@ data class ManagerUiState(
 
   val dashboardStats: DashboardStatsDto? = null,
   val activeVehicles: List<ActiveVehicleDto> = emptyList(),
-  val fleetSummary: List<FleetSummaryDto> = emptyList(),
+  val fleetSummary: FleetSummaryDto? = null,
 
   val fleets: List<FleetDto> = emptyList(),
   val vehicles: List<VehicleDto> = emptyList(),

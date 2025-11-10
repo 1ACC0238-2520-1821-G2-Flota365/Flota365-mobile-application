@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,6 +31,7 @@ import pe.edu.upc.flota365.features.manager.presentation.manager.FleetScreen
 import pe.edu.upc.flota365.features.manager.presentation.monitoring.MonitoringScreen
 import pe.edu.upc.flota365.features.manager.presentation.report.CreateReportScreen
 import pe.edu.upc.flota365.features.manager.presentation.report.ReportsScreen
+import pe.edu.upc.flota365.features.manager.presentation.viewmodel.ManagerViewModel
 
 /* ----------------------------- NAV DESTINATIONS ----------------------------- */
 object NavDestinations {
@@ -129,7 +131,11 @@ fun FleetNavGraph(rootNavController: NavHostController) {
       }
 
       composable(NavDestinations.MONITORING) {
-        MonitoringScreen(onMenuClick = { scope.launch { drawerState.open() } })
+        val managerViewModel: ManagerViewModel = hiltViewModel()
+        MonitoringScreen(
+          viewModel = managerViewModel,
+          onMenuClick = { scope.launch { drawerState.open() } }
+        )
       }
 
       composable(NavDestinations.PROFILE) {

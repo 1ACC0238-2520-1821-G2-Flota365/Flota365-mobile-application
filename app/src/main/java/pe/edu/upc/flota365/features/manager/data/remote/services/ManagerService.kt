@@ -42,7 +42,7 @@ interface ManagerService {
   suspend fun getActiveVehicles(): Response<List<ActiveVehicleDto>>
 
   @GET("Dashboard/fleet-summary")
-  suspend fun getFleetSummary(): Response<List<FleetSummaryDto>>
+  suspend fun getFleetSummary(): Response<FleetSummaryDto>
 
   // --- FLEETS ---
   @GET("Fleets")

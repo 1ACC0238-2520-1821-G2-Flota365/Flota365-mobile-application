@@ -2,6 +2,7 @@ package pe.edu.upc.flota365.features.manager.data.repositories
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import pe.edu.upc.flota365.core.network.RetrofitInstance.api
 import pe.edu.upc.flota365.core.utils.Resource
 import pe.edu.upc.flota365.features.auth.data.remote.services.AuthService
 import pe.edu.upc.flota365.features.manager.data.remote.models.*
@@ -40,8 +41,9 @@ class ManagerRepositoryImpl @Inject constructor(
   suspend fun getActiveVehicles(): Resource<List<ActiveVehicleDto>> =
     safeApiCall { managerService.getActiveVehicles() }
 
-  suspend fun getFleetSummary(): Resource<List<FleetSummaryDto>> =
-    safeApiCall { managerService.getFleetSummary() }
+  suspend fun getFleetSummary(): Resource<FleetSummaryDto> {
+    return safeApiCall { managerService.getFleetSummary() }
+  }
 
   // --- FLEETS ---
   suspend fun getFleets(): Resource<List<FleetDto>> =
