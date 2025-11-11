@@ -1,9 +1,11 @@
 package pe.edu.upc.flota365.features.manager.presentation.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import pe.edu.upc.flota365.core.ui.theme.* // ✅ Importa tus colores personalizados
+import pe.edu.upc.flota365.core.ui.theme.*
 import pe.edu.upc.flota365.features.manager.presentation.viewmodel.ManagerViewModel
 import pe.edu.upc.flota365.features.manager.presentation.event.ManagerUiEvent
 import pe.edu.upc.flota365.features.manager.data.remote.models.ActiveVehicleDto
@@ -23,11 +25,10 @@ import pe.edu.upc.flota365.features.manager.data.remote.models.DashboardStatsDto
 fun DashboardScreen(
   viewModel: ManagerViewModel = hiltViewModel(),
   onMenuClick: () -> Unit = {},
-  onLogout: () -> Unit = {}
+  onNavigateToProfile: () -> Unit = {}
 ) {
   val uiState = viewModel.uiState
 
-  // 🔹 Carga inicial del dashboard
   LaunchedEffect(Unit) {
     viewModel.onEvent(ManagerUiEvent.LoadDashboard)
   }
@@ -39,10 +40,31 @@ fun DashboardScreen(
           Text(
             "Panel del Gestor de Flota",
             fontWeight = FontWeight.Bold,
+            color = FlotaBgLight
           )
         },
+        navigationIcon = {
+          IconButton(onClick = onMenuClick) {
+            Icon(
+              Icons.Filled.Menu,
+              contentDescription = "Abrir menú",
+              tint = FlotaBgLight
+            )
+          }
+        },
+        actions = {
+          IconButton(onClick = onNavigateToProfile) {
+            Icon(
+              Icons.Filled.AccountCircle,
+              contentDescription = "Ir al perfil",
+              tint = FlotaBgLight
+            )
+          }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = FlotaPrimary)
       )
     },
+    containerColor = FlotaGrayLight
   ) { padding ->
     Box(
       modifier = Modifier
@@ -72,9 +94,7 @@ fun DashboardScreen(
               .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
           ) {
-            item {
-              DashboardSummary(uiState.dashboardStats)
-            }
+            item { DashboardSummary(uiState.dashboardStats) }
 
             item {
               Text(

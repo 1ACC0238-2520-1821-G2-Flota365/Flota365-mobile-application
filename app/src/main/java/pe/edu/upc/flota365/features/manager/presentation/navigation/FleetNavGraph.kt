@@ -2,14 +2,15 @@ package pe.edu.upc.flota365.features.manager.presentation.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,7 +42,7 @@ object NavDestinations {
   const val REPORT_CREATE = "report_create"
 }
 
-/* ----------------------------- NAV GRAPH ----------------------------- */
+/* ----------------------------- MAIN NAV GRAPH ----------------------------- */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FleetNavGraph(rootNavController: NavHostController) {
@@ -56,13 +57,16 @@ fun FleetNavGraph(rootNavController: NavHostController) {
       startDestination = NavDestinations.DASHBOARD,
       modifier = Modifier.padding(padding)
     ) {
-      /* --------- Dashboard --------- */
+      // Dashboard
       composable(NavDestinations.DASHBOARD) {
         val viewModel: ManagerViewModel = hiltViewModel()
-        DashboardScreen(viewModel = viewModel)
+        DashboardScreen(
+          viewModel = viewModel,
+          onNavigateToProfile = { navController.navigate(NavDestinations.PROFILE) }
+        )
       }
 
-      /* --------- Drivers --------- */
+      // Conductores
       composable(NavDestinations.DRIVERS) {
         DriversListScreen(
           onCreate = { navController.navigate(NavDestinations.DRIVER_CREATE) },
@@ -75,16 +79,16 @@ fun FleetNavGraph(rootNavController: NavHostController) {
       composable(NavDestinations.DRIVER_EDIT) { DriverFormScreen(DriverFormMode.Edit) }
       composable(NavDestinations.DRIVER_STATS) { DriverStatsScreen() }
 
-      /* --------- Fleet --------- */
+      // Flota
       composable(NavDestinations.FLEET) { FleetScreen() }
 
-      /* --------- Monitoring --------- */
+      // Monitoreo
       composable(NavDestinations.MONITORING) {
         val viewModel: ManagerViewModel = hiltViewModel()
         MonitoringScreen(viewModel = viewModel, onMenuClick = {})
       }
 
-      /* --------- Reports --------- */
+      // Reportes
       composable(NavDestinations.REPORTS) {
         ReportsScreen(onNavigateToCreate = { navController.navigate(NavDestinations.REPORT_CREATE) })
       }
@@ -95,7 +99,7 @@ fun FleetNavGraph(rootNavController: NavHostController) {
         )
       }
 
-      /* --------- Profile --------- */
+      // Perfil (solo accesible desde el dashboard)
       composable(NavDestinations.PROFILE) {
         ProfileScreen()
       }
@@ -103,30 +107,48 @@ fun FleetNavGraph(rootNavController: NavHostController) {
   }
 }
 
-/* ----------------------------- Bottom Navigation ----------------------------- */
+/* ----------------------------- BOTTOM NAVIGATION ----------------------------- */
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
+  // 👇 Eliminamos el ítem de Perfil
   val items = listOf(
-    BottomNavItem("Dashboard", Icons.Filled.Home, NavDestinations.DASHBOARD),
+    BottomNavItem("Inicio", Icons.Filled.Home, NavDestinations.DASHBOARD),
     BottomNavItem("Conductores", Icons.Filled.List, NavDestinations.DRIVERS),
     BottomNavItem("Flota", Icons.Filled.DirectionsCar, NavDestinations.FLEET),
     BottomNavItem("Monitoreo", Icons.Filled.Map, NavDestinations.MONITORING),
-    BottomNavItem("Reportes", Icons.Filled.Assessment, NavDestinations.REPORTS),
-    BottomNavItem("Perfil", Icons.Filled.Person, NavDestinations.PROFILE)
+    BottomNavItem("Reportes", Icons.Filled.Assessment, NavDestinations.REPORTS)
   )
 
   NavigationBar(
-    containerColor = FlotaPrimary,
-    tonalElevation = 4.dp
+    containerColor = FlotaBgLight,
+    tonalElevation = 6.dp
   ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
     items.forEach { item ->
+      val selected = currentRoute == item.route
+      val iconColor by animateColorAsState(
+        if (selected) FlotaPrimary else FlotaTextDark,
+        label = "iconColorAnim"
+      )
+
       NavigationBarItem(
-        icon = { Icon(item.icon, contentDescription = item.label) },
-        label = { Text(item.label, color = FlotaBgLight) },
-        selected = currentRoute == item.route,
+        icon = {
+          Icon(
+            item.icon,
+            contentDescription = item.label,
+            tint = iconColor
+          )
+        },
+        label = {
+          Text(
+            text = item.label,
+            color = iconColor,
+            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
+          )
+        },
+        selected = selected,
         onClick = {
           navController.navigate(item.route) {
             popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -135,24 +157,21 @@ fun BottomNavigationBar(navController: NavHostController) {
           }
         },
         colors = NavigationBarItemDefaults.colors(
-          selectedIconColor = FlotaBgLight,
-          selectedTextColor = FlotaBgLight,
-          unselectedIconColor = FlotaPrimaryAlt,
-          indicatorColor = FlotaPrimaryAlt
+          indicatorColor = FlotaPrimaryAlt.copy(alpha = 0.15f)
         )
       )
     }
   }
 }
 
-/* ----------------------------- Helper ----------------------------- */
+/* ----------------------------- NAV ITEM MODEL ----------------------------- */
 data class BottomNavItem(
   val label: String,
   val icon: ImageVector,
   val route: String
 )
 
-/* ----------------------------- Preview ----------------------------- */
+/* ----------------------------- PREVIEW ----------------------------- */
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
