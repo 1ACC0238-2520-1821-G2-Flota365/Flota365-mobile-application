@@ -101,7 +101,7 @@ fun FleetNavGraph(rootNavController: NavHostController) {
 
       // Perfil (solo accesible desde el dashboard)
       composable(NavDestinations.PROFILE) {
-        ProfileScreen()
+        ProfileScreen(navController = rootNavController)
       }
     }
   }
