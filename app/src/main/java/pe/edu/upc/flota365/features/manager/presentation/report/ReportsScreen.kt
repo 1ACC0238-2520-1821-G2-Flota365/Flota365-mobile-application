@@ -14,11 +14,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
-import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
-import pe.edu.upc.flota365.core.utils.Resource
+import pe.edu.upc.flota365.core.ui.theme.*
 import pe.edu.upc.flota365.features.manager.presentation.ui.AppScaffold
 
 @Composable
@@ -29,9 +26,8 @@ fun ReportsScreen(
 ) {
   val state = viewModel.uiState
   val snackbarHostState = remember { SnackbarHostState() }
-  val scope = rememberCoroutineScope()
 
-  // 🔁 Carga inicial
+  // Carga inicial
   LaunchedEffect(Unit) {
     viewModel.fetchReports()
   }
@@ -41,6 +37,7 @@ fun ReportsScreen(
     onMenuClick = onMenuClick,
     snackbarHostState = snackbarHostState
   ) { pad ->
+
     Column(
       Modifier
         .fillMaxSize()
@@ -48,22 +45,27 @@ fun ReportsScreen(
         .padding(horizontal = 16.dp, vertical = 12.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+
       Text(
         text = "Reportes",
         style = MaterialTheme.typography.headlineSmall,
-        fontWeight = FontWeight.SemiBold
+        fontWeight = FontWeight.SemiBold,
+        color = FlotaTextDark
       )
 
-      // --- Filtros ---
+      /* ----------------- FILTROS ----------------- */
       ElevatedCard(
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp),
+        colors = CardDefaults.cardColors(containerColor = FlotaBgLight)
       ) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+
           Text(
             "Filtros de reporte",
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            color = FlotaTextDark
           )
 
           Row(
@@ -72,12 +74,30 @@ fun ReportsScreen(
             verticalAlignment = Alignment.Top
           ) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-              LabeledDropdown(label = "Tipos de reporte")
-              LabeledDropdown(label = "Vehículos")
+              DropdownMenuWithLabel(
+                label = "Tipo de reporte",
+                options = listOf("Flota", "Conductores", "Asignaciones", "Mantenimiento"),
+                selected = viewModel.selectedType,
+                onSelected = { viewModel.selectedType = it }
+              )
+              DropdownMenuWithLabel(
+                label = "Formato de salida",
+                options = listOf("PDF", "Excel", "CSV"),
+                selected = viewModel.selectedFormat,
+                onSelected = { viewModel.selectedFormat = it }
+              )
             }
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-              LabeledDateRange(label = "Rango de fechas")
-              LabeledDropdown(label = "Formato de salida")
+              DateRangeField(
+                label = "Desde",
+                value = viewModel.fromDate ?: "",
+                onValueChange = { viewModel.fromDate = it }
+              )
+              DateRangeField(
+                label = "Hasta",
+                value = viewModel.toDate ?: "",
+                onValueChange = { viewModel.toDate = it }
+              )
             }
           }
 
@@ -85,37 +105,51 @@ fun ReportsScreen(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
           ) {
-            // ✅ BOTÓN PARA GENERAR REPORTE
-            Button(onClick = { onNavigateToCreate() }) {
-              Text("Generar reporte")
+            Button(
+              onClick = { viewModel.applyFilters() },
+              colors = ButtonDefaults.buttonColors(containerColor = FlotaPrimary)
+            ) {
+              Text("Aplicar filtros", color = FlotaBgLight)
             }
             Spacer(Modifier.width(10.dp))
-            OutlinedButton(onClick = { /* TODO: Limpiar filtros */ }) {
+            OutlinedButton(onClick = { viewModel.clearFilters() }) {
               Text("Limpiar filtros")
             }
           }
         }
       }
 
-      // --- Lista de reportes ---
+      /* ----------------- LISTA DE REPORTES ----------------- */
       Text(
         "Reportes recientes",
         style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Medium
+        fontWeight = FontWeight.Medium,
+        color = FlotaTextDark
       )
 
       when {
-        state.isLoading -> CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+        state.isLoading -> CircularProgressIndicator(
+          Modifier.align(Alignment.CenterHorizontally),
+          color = FlotaPrimary
+        )
+
         state.error != null -> Text(
           text = "Error: ${state.error}",
-          color = MaterialTheme.colorScheme.error,
+          color = FlotaError,
           modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-        state.reports.isEmpty() -> Text("No hay reportes disponibles")
+
+        state.reports.isEmpty() -> Text(
+          "No hay reportes disponibles",
+          color = FlotaTextDark,
+          modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+
         else -> {
           ElevatedCard(
             shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp),
+            colors = CardDefaults.cardColors(containerColor = FlotaBgLight)
           ) {
             val scroll = rememberScrollState()
             Column(Modifier.horizontalScroll(scroll)) {
@@ -131,7 +165,7 @@ fun ReportsScreen(
                 TableHeaderCell("Creado por", 0.27f)
               }
 
-              Divider(thickness = 0.dp, color = MaterialTheme.colorScheme.primary)
+              Divider(thickness = 0.dp, color = FlotaPrimary)
 
               state.reports.forEach { report ->
                 ReportRow(
@@ -150,29 +184,46 @@ fun ReportsScreen(
   }
 }
 
-/* ---------- Reusables ---------- */
+/* ----------------- REUSABLES ----------------- */
 
 @Composable
-fun LabeledDropdown(label: String) {
-  OutlinedTextField(
-    value = "",
-    onValueChange = {},
-    label = { Text(label) },
-    readOnly = true,
-    enabled = false,
-    trailingIcon = { Icon(Icons.Filled.ArrowDropDown, contentDescription = null) },
-    modifier = Modifier.fillMaxWidth()
-  )
+fun DropdownMenuWithLabel(label: String, options: List<String>, selected: String?, onSelected: (String?) -> Unit) {
+  var expanded by remember { mutableStateOf(false) }
+
+  Column {
+    OutlinedTextField(
+      value = selected ?: "",
+      onValueChange = {},
+      label = { Text(label) },
+      readOnly = true,
+      trailingIcon = {
+        IconButton(onClick = { expanded = !expanded }) {
+          Icon(Icons.Filled.ArrowDropDown, contentDescription = null)
+        }
+      },
+      modifier = Modifier.fillMaxWidth()
+    )
+
+    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+      options.forEach { option ->
+        DropdownMenuItem(
+          text = { Text(option) },
+          onClick = {
+            onSelected(option)
+            expanded = false
+          }
+        )
+      }
+    }
+  }
 }
 
 @Composable
-fun LabeledDateRange(label: String) {
+fun DateRangeField(label: String, value: String, onValueChange: (String) -> Unit) {
   OutlinedTextField(
-    value = "",
-    onValueChange = {},
+    value = value,
+    onValueChange = onValueChange,
     label = { Text(label) },
-    readOnly = true,
-    enabled = false,
     trailingIcon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
     modifier = Modifier.fillMaxWidth()
   )
@@ -184,22 +235,17 @@ fun TableHeaderCell(text: String, weight: Float) {
     Text(
       text = text,
       style = MaterialTheme.typography.labelLarge,
-      color = MaterialTheme.colorScheme.onPrimary,
+      color = FlotaBgLight,
       modifier = Modifier
         .fillMaxWidth()
-        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+        .background(FlotaPrimary, RoundedCornerShape(8.dp))
         .padding(horizontal = 8.dp, vertical = 8.dp)
     )
   }
 }
 
 @Composable
-fun ReportRow(
-  nombre: String?,
-  tipo: String?,
-  fecha: String?,
-  autor: String?
-) {
+fun ReportRow(nombre: String?, tipo: String?, fecha: String?, autor: String?) {
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -216,12 +262,6 @@ fun ReportRow(
 @Composable
 fun BodyCell(text: String, weight: Float) {
   Box(Modifier.padding(end = 8.dp)) {
-    Text(text = text, style = MaterialTheme.typography.bodyMedium)
+    Text(text = text, style = MaterialTheme.typography.bodyMedium, color = FlotaTextDark)
   }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun ReportsScreenPreview() {
-  FlotaTheme { ReportsScreen() }
 }

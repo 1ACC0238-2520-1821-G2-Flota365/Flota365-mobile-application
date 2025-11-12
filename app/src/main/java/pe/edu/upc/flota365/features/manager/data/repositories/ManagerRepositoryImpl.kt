@@ -127,6 +127,14 @@ class ManagerRepositoryImpl @Inject constructor(
         Resource.Error(e.localizedMessage ?: "Error desconocido")
       }
     }
+  suspend fun getReportsFiltered(
+    type: String? = null,
+    vehicleId: Int? = null,
+    fromDate: String? = null,
+    toDate: String? = null
+  ): Resource<List<Report>> = safeApiCall {
+    managerService.getReportsFiltered(type, vehicleId, fromDate, toDate)
+  }
   // --- MÉTODO GENÉRICO ---
   private suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Resource<T> =
     withContext(Dispatchers.IO) {

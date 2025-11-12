@@ -27,6 +27,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ManagerService {
 
@@ -114,4 +115,15 @@ interface ManagerService {
   suspend fun getReports(): Response<List<Report>>
 
   @POST("Report")
-  suspend fun postReport(@Body request: CreateReportRequest): Response<Unit>}
+  suspend fun postReport(@Body request: CreateReportRequest): Response<Unit>
+  @GET("Report")
+  suspend fun getReportsFiltered(
+    @Query("type") type: String? = null,
+    @Query("vehicleId") vehicleId: Int? = null,
+    @Query("fromDate") fromDate: String? = null,
+    @Query("toDate") toDate: String? = null
+  ): Response<List<Report>>
+}
+
+
+
