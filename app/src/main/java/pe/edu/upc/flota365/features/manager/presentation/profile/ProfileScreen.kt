@@ -1,4 +1,4 @@
-package pe.edu.upc.flota365.presentation.ui.profile
+package pe.edu.upc.flota365.features.manager.presentation.profile
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -52,7 +52,7 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.spacedBy(24.dp)
       ) {
         Text(
-          text = "Hola, $userName 👋",
+          text = "Hola, $userName",
           style = MaterialTheme.typography.headlineSmall,
           color = FlotaTextDark
         )

@@ -25,7 +25,7 @@ import pe.edu.upc.flota365.features.manager.presentation.report.CreateReportScre
 import pe.edu.upc.flota365.features.manager.presentation.report.ReportsScreen
 import pe.edu.upc.flota365.features.manager.presentation.screens.DashboardScreen
 import pe.edu.upc.flota365.features.manager.presentation.viewmodel.ManagerViewModel
-import pe.edu.upc.flota365.presentation.ui.profile.ProfileScreen
+import pe.edu.upc.flota365.features.manager.presentation.profile.ProfileScreen
 
 /* ----------------------------- NAV DESTINATIONS ----------------------------- */
 object NavDestinations {
@@ -110,7 +110,6 @@ fun FleetNavGraph(rootNavController: NavHostController) {
 /* ----------------------------- BOTTOM NAVIGATION ----------------------------- */
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
-  // 👇 Eliminamos el ítem de Perfil
   val items = listOf(
     BottomNavItem("Inicio", Icons.Filled.Home, NavDestinations.DASHBOARD),
     BottomNavItem("Conductores", Icons.Filled.List, NavDestinations.DRIVERS),
@@ -121,7 +120,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 
   NavigationBar(
     containerColor = FlotaBgLight,
-    tonalElevation = 6.dp
+    tonalElevation = 5.dp
   ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -145,7 +144,8 @@ fun BottomNavigationBar(navController: NavHostController) {
           Text(
             text = item.label,
             color = iconColor,
-            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
+            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+            style = LocalTextStyle.current.copy(fontSize = MaterialTheme.typography.labelSmall.fontSize)
           )
         },
         selected = selected,
