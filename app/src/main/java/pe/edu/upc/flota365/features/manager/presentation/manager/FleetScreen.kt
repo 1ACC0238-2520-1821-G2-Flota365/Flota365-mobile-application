@@ -6,26 +6,51 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pe.edu.upc.flota365.features.manager.presentation.ui.AppScaffold
+import kotlinx.coroutines.launch
 import pe.edu.upc.flota365.core.ui.theme.FlotaTheme
+import pe.edu.upc.flota365.features.manager.data.remote.models.CreateFleetRequest
+import pe.edu.upc.flota365.features.manager.presentation.ui.AppScaffold
 
 @Composable
 fun FleetScreen(
   onMenuClick: () -> Unit = {},
-  onNewFleet: () -> Unit = {}
+  viewModel: FleetViewModel = hiltViewModel()
 ) {
+  val uiState = viewModel.uiState
+  val snackbarHostState = remember { SnackbarHostState() }
+  val scope = rememberCoroutineScope()
+  var showDialog by remember { mutableStateOf(false) }
+
+  // 🔹 Cargar flotas al iniciar
+  LaunchedEffect(Unit) { viewModel.loadFleets() }
+
+  // 🔹 Mostrar Snackbars automáticos
+  LaunchedEffect(uiState.message, uiState.error) {
+    uiState.message?.let {
+      scope.launch { snackbarHostState.showSnackbar(it) }
+      viewModel.clearMessages()
+    }
+    uiState.error?.let {
+      scope.launch { snackbarHostState.showSnackbar(it) }
+      viewModel.clearMessages()
+    }
+  }
+
   AppScaffold(
     title = "Gestión de Flota",
-    onMenuClick = onMenuClick
+    onMenuClick = onMenuClick,
+    snackbarHostState = snackbarHostState
   ) { pad ->
     Column(
       Modifier
@@ -35,178 +60,142 @@ fun FleetScreen(
         .padding(horizontal = 16.dp, vertical = 12.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+      Text("Gestión de Flota", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
 
-      // Título grande
-      Text(
-        "Gestión de Flota:",
-        style = MaterialTheme.typography.headlineSmall,
-        fontWeight = FontWeight.SemiBold
-      )
+      // ---------- KPIs ----------
+      if (uiState.fleets.isNotEmpty()) {
+        val total = uiState.fleets.size
+        val activos = uiState.fleets.count { it.isActive }
+        val inactivos = total - activos
 
-      // -------- KPIs (2 x 2) --------
-      ElevatedCard(shape = RoundedCornerShape(16.dp)) {
-        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-          Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            FleetKpiCard(
-              modifier = Modifier.weight(1f),
-              title = "Total de flotas:",
-              value = "41",
-              trend = "+ 1% esta semana"
-            )
-            FleetKpiCard(
-              modifier = Modifier.weight(1f),
-              title = "Flota Principal:",
-              value = "38",
-              trend = "12% operativo"
-            )
-          }
-          Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            FleetKpiCard(
-              modifier = Modifier.weight(1f),
-              title = "Flota Secundaria:",
-              value = "3",
-              trend = "12% operativo"
-            )
-            FleetKpiCard(
-              modifier = Modifier.weight(1f),
-              title = "Flota Externa:",
-              value = "41",
-              trend = "100% operativo"
-            )
-          }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+          FleetKpiCard("Flotas Totales", total.toString(), "100% registradas")
+          FleetKpiCard("Activas", activos.toString(), "${(activos * 100 / total)}% operativas")
+          FleetKpiCard("Inactivas", inactivos.toString(), "${(inactivos * 100 / total)}% inactivas")
         }
       }
 
-      // -------- Gestión de Flotas (tabla) --------
+      // ---------- Botón Nueva Flota ----------
       Row(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
       ) {
-        Text(
-          "Gestión de Flotas:",
-          style = MaterialTheme.typography.titleMedium,
-          fontWeight = FontWeight.SemiBold
-        )
-        // Botón tipo "pill" a la derecha
+        Text("Listado de Flotas", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+
         Button(
-          onClick = onNewFleet,
+          onClick = { showDialog = true },
           contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
           shape = RoundedCornerShape(12.dp)
-        ) { Text("+ Nueva flota") }
-      }
-
-      ElevatedCard(shape = RoundedCornerShape(16.dp)) {
-        Column {
-          FleetHeaderRow(
-            "ID" to 0.14f,
-            "Nombre" to 0.22f,
-            "Descripción" to 0.32f,
-            "Vehículos" to 0.16f,
-            "Estado" to 0.16f
-          )
-          Divider()
-          FleetDataRow("FL-001", "Flota Principal", "Unidades urbanas", "38", "Operativa")
-          Divider()
-          FleetDataRow("FL-002", "Flota secundaria", "Soporte interprovincial", "12", "Operativa")
-          Divider()
-          FleetDataRow("FL-003", "Flota externa", "Tercerizada para picos", "7", "Parcial")
+        ) {
+          Icon(Icons.Filled.Add, contentDescription = null)
+          Spacer(Modifier.width(4.dp))
+          Text("Nueva flota")
         }
       }
 
-      // -------- Flota Principal (tabla vehículos) --------
-      Text(
-        "Flota Principal:",
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.SemiBold
+      // ---------- Tabla de flotas ----------
+      when {
+        uiState.isLoading -> CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+        uiState.error != null -> Text("Error: ${uiState.error}", color = MaterialTheme.colorScheme.error)
+        uiState.fleets.isEmpty() -> Text("No hay flotas registradas.")
+        else -> {
+          ElevatedCard(shape = RoundedCornerShape(16.dp)) {
+            Column {
+              FleetHeaderRow("Código", "Nombre", "Descripción", "Vehículos", "Estado", "Acciones")
+              Divider()
+              uiState.fleets.forEach { fleet ->
+                FleetDataRow(
+                  c1 = fleet.code ?: "-",
+                  c2 = fleet.name,
+                  c3 = fleet.description ?: "Sin descripción",
+                  c4 = fleet.vehicleCount.toString(),
+                  c5 = if (fleet.isActive) "Activa" else "Inactiva",
+                  onDelete = { viewModel.deleteFleet(fleet.id) }
+                )
+                Divider()
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // ---------- Diálogo Crear Flota ----------
+    if (showDialog) {
+      CreateFleetDialog(
+        onDismiss = { showDialog = false },
+        onConfirm = { name, desc, type ->
+          viewModel.createFleet(CreateFleetRequest(name, desc, type))
+          showDialog = false
+        }
       )
-
-      ElevatedCard(shape = RoundedCornerShape(16.dp)) {
-        Column {
-          FleetHeaderRow(
-            "Placa" to 0.18f,
-            "Modelo" to 0.32f,
-            "Conductor" to 0.22f,
-            "Vehículos" to 0.14f,
-            "Estado" to 0.14f
-          )
-          Divider()
-          FleetDataRow("ABC-123", "Toyota Hilux 2023", "Carlos Méndez", "1", "Activo")
-          Divider()
-          FleetDataRow("XYZ-789", "Ford Ranger 2022", "Carlos Méndez", "1", "Activo")
-          Divider()
-          FleetDataRow("DEF-456", "Mitsubishi L200 2023", "Carlos Méndez", "1", "En ruta")
-        }
-      }
     }
   }
 }
 
-/* ---------- Reusables ---------- */
-
+/* ----------------- DIALOG: Crear Flota ----------------- */
 @Composable
-private fun FleetKpiCard(
-  title: String,
-  value: String,
-  trend: String,
-  modifier: Modifier = Modifier
+fun CreateFleetDialog(
+  onDismiss: () -> Unit,
+  onConfirm: (String, String, Int) -> Unit
 ) {
-  ElevatedCard(modifier = modifier, shape = RoundedCornerShape(16.dp)) {
-    Row(
-      Modifier
-        .fillMaxWidth()
-        .padding(12.dp),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(10.dp)
+  var name by remember { mutableStateOf("") }
+  var description by remember { mutableStateOf("") }
+  var type by remember { mutableStateOf("0") }
+
+  AlertDialog(
+    onDismissRequest = onDismiss,
+    title = { Text("Nueva flota") },
+    text = {
+      Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Nombre") })
+        OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text("Descripción") })
+        OutlinedTextField(value = type, onValueChange = { type = it }, label = { Text("Tipo (ID numérico)") })
+      }
+    },
+    confirmButton = {
+      Button(onClick = { onConfirm(name, description, type.toIntOrNull() ?: 0) }) {
+        Text("Crear")
+      }
+    },
+    dismissButton = {
+      OutlinedButton(onClick = onDismiss) { Text("Cancelar") }
+    }
+  )
+}
+
+/* ----------------- COMPONENTES REUTILIZABLES ----------------- */
+@Composable
+private fun FleetKpiCard(title: String, value: String, trend: String) {
+  ElevatedCard(shape = RoundedCornerShape(16.dp)) {
+    Column(
+      Modifier.padding(12.dp),
+      verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-      // Ícono/ilustración
-      Surface(
-        color = MaterialTheme.colorScheme.primary.copy(alpha = .12f),
-        shape = RoundedCornerShape(12.dp)
-      ) {
-        Box(Modifier.size(48.dp), contentAlignment = Alignment.Center) {
-          Icon(
-            imageVector = Icons.Filled.DirectionsCar,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
-          )
-        }
-      }
-      Column(Modifier.weight(1f)) {
-        Text(title, style = MaterialTheme.typography.labelLarge)
-        Text(value, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        Text(
-          "↑ $trend",
-          style = MaterialTheme.typography.labelSmall,
-          color = Color(0xFF2E7D32) // verde
-        )
-      }
+      Text(title, style = MaterialTheme.typography.labelLarge)
+      Text(value, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+      Text(trend, style = MaterialTheme.typography.labelSmall, color = Color(0xFF2E7D32))
     }
   }
 }
 
 @Composable
-private fun FleetHeaderRow(vararg cells: Pair<String, Float>) {
-  // Cabecera con fondo teal y texto blanco
+private fun FleetHeaderRow(vararg titles: String) {
   Row(
-    modifier = Modifier
+    Modifier
       .fillMaxWidth()
-      .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-      .padding(horizontal = 12.dp, vertical = 10.dp),
+      .background(MaterialTheme.colorScheme.primary)
+      .padding(vertical = 10.dp, horizontal = 12.dp),
     verticalAlignment = Alignment.CenterVertically
   ) {
-    cells.forEach { (title, weight) ->
-      Box(
-        Modifier
-          .weight(weight)
-          .padding(end = 8.dp)
-      ) {
-        Text(
-          text = title,
-          style = MaterialTheme.typography.labelLarge,
-          color = MaterialTheme.colorScheme.onPrimary
-        )
-      }
+    titles.forEach {
+      Text(
+        text = it,
+        modifier = Modifier.weight(1f),
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onPrimary
+      )
     }
   }
 }
@@ -217,34 +206,30 @@ private fun FleetDataRow(
   c2: String,
   c3: String,
   c4: String,
-  c5: String
+  c5: String,
+  onDelete: () -> Unit
 ) {
   Row(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(horizontal = 12.dp, vertical = 10.dp),
+    Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
     verticalAlignment = Alignment.CenterVertically
   ) {
-    BodyCell(c1, 0.14f)
-    BodyCell(c2, 0.22f)
-    BodyCell(c3, 0.32f)
-    BodyCell(c4, 0.16f)
-    BodyCell(c5, 0.16f)
+    Text(c1, Modifier.weight(1f))
+    Text(c2, Modifier.weight(1f))
+    Text(c3, Modifier.weight(1f))
+    Text(c4, Modifier.weight(1f))
+    Text(
+      c5,
+      Modifier.weight(1f),
+      color = if (c5 == "Activa") Color(0xFF2E7D32) else Color(0xFFD32F2F),
+      fontWeight = FontWeight.Medium
+    )
+    IconButton(onClick = onDelete) {
+      Icon(Icons.Filled.Delete, contentDescription = "Eliminar", tint = Color(0xFFD32F2F))
+    }
   }
 }
 
-@Composable
-private fun BodyCell(text: String, weight: Float) {
-  Box(
-    Modifier
-      .padding(end = 8.dp)
-  ) {
-    Text(text, style = MaterialTheme.typography.bodyMedium)
-  }
-}
-
-/* ---------- Preview ---------- */
-
+/* ----------------- PREVIEW ----------------- */
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun FleetScreenPreview() {

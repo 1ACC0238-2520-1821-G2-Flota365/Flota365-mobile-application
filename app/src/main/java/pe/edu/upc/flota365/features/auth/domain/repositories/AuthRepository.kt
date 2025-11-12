@@ -3,8 +3,8 @@ package pe.edu.upc.flota365.features.auth.domain.repositories
 import pe.edu.upc.flota365.core.utils.Resource
 import pe.edu.upc.flota365.features.auth.data.remote.models.DriverRegisterRequestDto
 import pe.edu.upc.flota365.features.auth.data.remote.models.LoginResponseDto
-import pe.edu.upc.flota365.features.manager.data.remote.models.ManagerRegisterRequestDto
 import pe.edu.upc.flota365.features.auth.domain.models.User
+import pe.edu.upc.flota365.features.manager.data.remote.models.ManagerRegisterRequestDto
 import retrofit2.Response
 
 interface AuthRepository {
