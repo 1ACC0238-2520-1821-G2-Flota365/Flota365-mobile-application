@@ -135,6 +135,8 @@ class ManagerRepositoryImpl @Inject constructor(
   ): Resource<List<Report>> = safeApiCall {
     managerService.getReportsFiltered(type, vehicleId, fromDate, toDate)
   }
+
+
   // --- MÉTODO GENÉRICO ---
   private suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Resource<T> =
     withContext(Dispatchers.IO) {

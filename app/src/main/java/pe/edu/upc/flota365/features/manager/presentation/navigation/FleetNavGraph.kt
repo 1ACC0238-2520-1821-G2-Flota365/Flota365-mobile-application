@@ -21,6 +21,7 @@ import pe.edu.upc.flota365.core.ui.theme.*
 import pe.edu.upc.flota365.features.manager.presentation.driver.*
 import pe.edu.upc.flota365.features.manager.presentation.manager.FleetScreen
 import pe.edu.upc.flota365.features.manager.presentation.monitoring.MonitoringScreen
+import pe.edu.upc.flota365.features.manager.presentation.monitoring.MonitoringViewModel
 import pe.edu.upc.flota365.features.manager.presentation.report.CreateReportScreen
 import pe.edu.upc.flota365.features.manager.presentation.report.ReportsScreen
 import pe.edu.upc.flota365.features.manager.presentation.screens.DashboardScreen
@@ -83,11 +84,11 @@ fun FleetNavGraph(rootNavController: NavHostController) {
       composable(NavDestinations.FLEET) { FleetScreen() }
 
       // Monitoreo
+// Monitoreo
       composable(NavDestinations.MONITORING) {
-        val viewModel: ManagerViewModel = hiltViewModel()
+        val viewModel: MonitoringViewModel = hiltViewModel()
         MonitoringScreen(viewModel = viewModel, onMenuClick = {})
       }
-
       // Reportes
       composable(NavDestinations.REPORTS) {
         ReportsScreen(onNavigateToCreate = { navController.navigate(NavDestinations.REPORT_CREATE) })

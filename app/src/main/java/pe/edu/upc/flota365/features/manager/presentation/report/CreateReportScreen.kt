@@ -25,6 +25,7 @@ fun CreateReportScreen(
 ) {
   var title by remember { mutableStateOf("") }
   var type by remember { mutableStateOf("") }
+  var description by remember { mutableStateOf("") } // 🆕 Campo descripción
   var createdBy by remember { mutableStateOf("Administrador") }
 
   val snackbarHostState = remember { SnackbarHostState() }
@@ -61,6 +62,14 @@ fun CreateReportScreen(
       )
 
       OutlinedTextField(
+        value = description,
+        onValueChange = { description = it },
+        label = { Text("Descripción del reporte") },
+        modifier = Modifier.fillMaxWidth(),
+        minLines = 3
+      )
+
+      OutlinedTextField(
         value = createdBy,
         onValueChange = { createdBy = it },
         label = { Text("Creado por") },
@@ -82,7 +91,7 @@ fun CreateReportScreen(
 
         Button(onClick = {
           scope.launch {
-            if (title.isBlank() || type.isBlank()) {
+            if (title.isBlank() || type.isBlank() || description.isBlank()) {
               snackbarHostState.showSnackbar("Completa todos los campos")
               return@launch
             }
@@ -91,7 +100,8 @@ fun CreateReportScreen(
               title = title,
               type = type,
               generatedAt = Instant.now().toString(),
-              createdBy = createdBy
+              createdBy = createdBy,
+              description = description // 🆕 Añadido aquí
             )
 
             val result = viewModel.createReport(request)
