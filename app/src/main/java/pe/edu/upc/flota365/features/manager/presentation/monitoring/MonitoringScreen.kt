@@ -59,13 +59,6 @@ fun MonitoringScreen(
 
       // 🗺️ Mapa o placeholder
       ElevatedCard(shape = RoundedCornerShape(16.dp)) {
-        Column(Modifier.padding(12.dp)) {
-          MapPreview(
-            imageRes = null,
-            modifier = Modifier
-              .fillMaxWidth()
-              .height(220.dp)
-          )
           Spacer(Modifier.height(8.dp))
           Text(
             "Estado de vehículos:",
@@ -111,41 +104,10 @@ fun MonitoringScreen(
       }
     }
   }
-}
 
 /* =======================
    Building blocks
    ======================= */
-
-@Composable
-private fun MapPreview(
-  @DrawableRes imageRes: Int?,
-  modifier: Modifier = Modifier
-) {
-  if (imageRes != null) {
-    Image(
-      painter = painterResource(id = imageRes),
-      contentDescription = "Mapa",
-      modifier = modifier.clip(RoundedCornerShape(12.dp))
-    )
-  } else {
-    Box(
-      modifier
-        .clip(RoundedCornerShape(12.dp))
-        .background(
-          Brush.linearGradient(
-            listOf(
-              MaterialTheme.colorScheme.primary.copy(alpha = .20f),
-              MaterialTheme.colorScheme.secondary.copy(alpha = .20f)
-            )
-          )
-        ),
-      contentAlignment = Alignment.Center
-    ) {
-      Text("Mapa (visual)", color = MaterialTheme.colorScheme.onSurfaceVariant)
-    }
-  }
-}
 
 @Composable
 private fun VehicleMonitorRow(
