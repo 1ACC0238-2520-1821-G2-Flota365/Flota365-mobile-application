@@ -21,8 +21,6 @@ sealed class AppDestination(val route: String) {
   data object Onboarding : AppDestination("onboarding")
   data object LoginWelcome : AppDestination("login_welcome")
   data object LoginForm : AppDestination("login_form")
-  data object RoleSelection : AppDestination("role_selection")
-  data object RegisterDriver : AppDestination("register_driver")
   data object RegisterManager : AppDestination("register_manager")
   data object SubscriptionPlan : AppDestination("subscription_plan")
   data object PaymentInformation : AppDestination("payment_information")

@@ -53,5 +53,5 @@ data class DriverStatsDto(
   val driversWithExpiredLicense: Int,
   val assignedDrivers: Int,
   val unassignedDrivers: Int,
-  val averageExperience: Int
+  val averageExperience: Double
 )
