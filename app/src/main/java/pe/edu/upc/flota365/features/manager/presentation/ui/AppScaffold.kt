@@ -11,11 +11,6 @@ import androidx.compose.ui.text.font.FontWeight
 import pe.edu.upc.flota365.core.ui.theme.*
 import pe.edu.upc.flota365.features.auth.presentation.UserSession
 
-/**
- * AppScaffold base para pantallas principales de Flota365.
- * Incluye barra superior con saludo y logout opcional.
- * Soporta Snackbars y mantiene la identidad visual del sistema.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppScaffold(

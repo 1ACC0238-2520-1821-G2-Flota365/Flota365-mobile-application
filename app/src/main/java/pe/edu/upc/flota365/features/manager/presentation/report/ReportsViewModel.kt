@@ -19,7 +19,6 @@ class ReportsViewModel @Inject constructor(
   private val repository: ManagerRepositoryImpl
 ) : ViewModel() {
 
-  // Estado de la pantalla
   var uiState by mutableStateOf(ReportsUiState())
     private set
 

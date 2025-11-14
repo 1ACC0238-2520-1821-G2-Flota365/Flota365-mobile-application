@@ -1,6 +1,4 @@
 package pe.edu.upc.flota365.features.manager.data.remote.models
-
-// === DTO que representa un conductor completo (GET /api/Driver) ===
 data class DriverDto(
   val id: Int,
   val code: String,
@@ -21,7 +19,6 @@ data class DriverDto(
   val isLicenseExpiringSoon: Boolean
 )
 
-// === Crear nuevo conductor (POST /api/Driver) ===
 data class CreateDriverDto(
   val code: String,
   val firstName: String,
@@ -33,8 +30,6 @@ data class CreateDriverDto(
   val experienceYears: Int
 )
 
-
-// === Actualizar conductor (PUT /api/Driver/{id}) ===
 data class UpdateDriverDto(
   val firstName: String,
   val lastName: String,
@@ -45,7 +40,6 @@ data class UpdateDriverDto(
   val experienceYears: Int,
   val assignedVehicle: String?
 )
-// === Estadísticas de conductores (GET /api/Driver/stats) ===
 data class DriverStatsDto(
   val totalDrivers: Int,
   val activeDrivers: Int,

@@ -60,16 +60,10 @@ fun ProfileScreen(
         Button(
           onClick = {
             scope.launch {
-              // 🔹 Limpia la sesión
+
               UserSession.clear()
-
-              // 🔹 Muestra feedback visual
               snackbarHostState.showSnackbar("Sesión cerrada correctamente")
-
-              // 🔹 Pequeña pausa antes de redirigir
               delay(800)
-
-              // 🔹 Regresa al flujo de login y limpia el backstack
               navController.navigate(AppDestination.LoginWelcome.route) {
                 popUpTo(AppDestination.Onboarding.route) { inclusive = true }
                 launchSingleTop = true

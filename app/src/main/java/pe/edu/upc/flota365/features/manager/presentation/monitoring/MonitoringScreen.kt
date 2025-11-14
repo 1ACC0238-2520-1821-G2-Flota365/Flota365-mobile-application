@@ -37,7 +37,7 @@ fun MonitoringScreen(
   var showReportDialog by remember { mutableStateOf<ActiveVehicleDto?>(null) }
   var showDeleteConfirm by remember { mutableStateOf<ActiveVehicleDto?>(null) }
 
-  // 🔹 Cargar datos desde backend
+
   LaunchedEffect(Unit) {
     viewModel.loadActiveVehicles()
   }
@@ -197,7 +197,6 @@ private fun VehicleMonitorRow(
       .padding(horizontal = 6.dp, vertical = 10.dp),
     verticalAlignment = Alignment.CenterVertically
   ) {
-    // 🚗 Ícono
     Surface(
       tonalElevation = 2.dp,
       shape = MaterialTheme.shapes.medium,
@@ -214,7 +213,6 @@ private fun VehicleMonitorRow(
 
     Spacer(Modifier.width(12.dp))
 
-    // 📋 Texto principal
     Column(Modifier.weight(1f)) {
       Row(verticalAlignment = Alignment.CenterVertically) {
         Text("Placa: ${vehicle.licensePlate}", style = MaterialTheme.typography.titleSmall)
