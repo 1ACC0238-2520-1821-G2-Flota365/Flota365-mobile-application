@@ -20,6 +20,7 @@ import pe.edu.upc.flota365.features.manager.presentation.viewmodel.ManagerViewMo
 import pe.edu.upc.flota365.features.manager.presentation.event.ManagerUiEvent
 import pe.edu.upc.flota365.features.manager.data.remote.models.ActiveVehicleDto
 import pe.edu.upc.flota365.features.manager.data.remote.models.DashboardStatsDto
+import pe.edu.upc.flota365.features.manager.data.remote.models.FleetSummaryDto
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,29 +30,31 @@ fun DashboardScreen(
 ) {
   val uiState = viewModel.uiState
 
-  // 1️⃣ Disparamos la carga del dashboard al entrar
+  // Cargar dashboard al entrar
   LaunchedEffect(Unit) {
     viewModel.onEvent(ManagerUiEvent.LoadDashboard)
   }
 
-  // 2️⃣ Loader de inicio mientras el back responde (sin usar uiState.isLoading)
   var showLoader by remember { mutableStateOf(true) }
 
+  // Cuando llega cualquier dato o error → ocultar loader
   LaunchedEffect(
     uiState.dashboardStats,
     uiState.activeVehicles,
+    uiState.fleetSummary,
     uiState.error
   ) {
-    // Cuando ya hay stats, vehículos o error, dejamos de mostrar el loader
-    if (uiState.dashboardStats != null ||
+    if (
+      uiState.dashboardStats != null ||
       uiState.activeVehicles.isNotEmpty() ||
+      uiState.fleetSummary != null ||
       uiState.error != null
     ) {
       showLoader = false
     }
   }
 
-  // 🔵 PANTALLA DE CARGA COMPLETA MIENTRAS EL BACK RESPONDE
+  // Loader Fullscreen
   if (showLoader) {
     Box(
       modifier = Modifier
@@ -67,17 +70,12 @@ fun DashboardScreen(
     return
   }
 
-  // 🔵 DASHBOARD NORMAL CUANDO YA HAY RESPUESTA
   Scaffold(
     topBar = {
       CenterAlignedTopAppBar(
         title = {
-          Text(
-            text = "Panel del Gestor",
-            fontWeight = FontWeight.SemiBold
-          )
+          Text("Panel del Gestor", fontWeight = FontWeight.SemiBold)
         },
-        navigationIcon = {},
         actions = {
           IconButton(onClick = onNavigateToProfile) {
             Icon(
@@ -112,10 +110,17 @@ fun DashboardScreen(
         .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
 
-      // 🔹 Resumen (4 tarjetas) fijo arriba
+      // --- Dashboard stats generales ---
       DashboardSummary(uiState.dashboardStats)
 
-      Spacer(modifier = Modifier.height(16.dp))
+      Spacer(Modifier.height(16.dp))
+
+      // --- NUEVO: resumen de flotas ---
+      uiState.fleetSummary?.let {
+        FleetSummarySection(it)
+      }
+
+      Spacer(Modifier.height(16.dp))
 
       Text(
         "Vehículos activos",
@@ -124,14 +129,11 @@ fun DashboardScreen(
         color = FlotaTextDark
       )
 
-      Spacer(modifier = Modifier.height(8.dp))
+      Spacer(Modifier.height(8.dp))
 
-      // Si hay error, lo mostramos en el área de la lista
       if (uiState.error != null) {
         Box(
-          modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f),
+          modifier = Modifier.fillMaxWidth().weight(1f),
           contentAlignment = Alignment.Center
         ) {
           Text(
@@ -140,23 +142,19 @@ fun DashboardScreen(
           )
         }
       } else {
-        // 🔹 SOLO la lista scrollea
         LazyColumn(
-          modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f),
+          modifier = Modifier.fillMaxWidth().weight(1f),
           verticalArrangement = Arrangement.spacedBy(16.dp),
           contentPadding = PaddingValues(bottom = 12.dp)
         ) {
-          items(uiState.activeVehicles) { vehicle ->
-            ActiveVehicleCard(vehicle)
+          items(uiState.activeVehicles) {
+            ActiveVehicleCard(it)
           }
         }
       }
     }
   }
 }
-
 /* ---------------------- RESUMEN Y TARJETAS ---------------------- */
 
 @Composable
@@ -164,17 +162,28 @@ fun DashboardSummary(stats: DashboardStatsDto?) {
   if (stats == null) return
 
   Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
       DashboardStatCard("Vehículos totales", stats.totalVehicles, FlotaPrimary)
-      DashboardStatCard("Vehículos activos", stats.activeVehicles, FlotaSuccess)
+      DashboardStatCard("Conductores activos", stats.activeDrivers, FlotaSuccess)
     }
+
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-      DashboardStatCard("Conductores", stats.totalDrivers, FlotaWarning)
-      DashboardStatCard("Asignaciones pendientes", stats.pendingAssignments, FlotaError)
+      DashboardStatCard("En mantenimiento", stats.vehiclesInMaintenance, FlotaWarning)
+      DashboardStatCard("Alertas", stats.alertsCount, FlotaError)
+    }
+
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+      DashboardStatCard("Total Flotas", stats.totalFleets, FlotaPrimary)
+      DashboardStatCard("Próx. Servicio", stats.vehiclesDueForService, FlotaSuccess)
+    }
+
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+      DashboardStatCard("Edad Promedio", stats.averageVehicleAge.toInt(), FlotaWarning)
+      DashboardStatCard("Eficiencia %", stats.fleetEfficiency.toInt(), FlotaPrimary)
     }
   }
 }
-
 @Composable
 fun RowScope.DashboardStatCard(
   title: String,
@@ -228,6 +237,100 @@ fun ActiveVehicleCard(vehicle: ActiveVehicleDto) {
           "En mantenimiento" -> FlotaWarning
           else -> FlotaGrayMid
         }
+      )
+    }
+  }
+}
+@Composable
+fun FleetSummarySection(summary: FleetSummaryDto) {
+  Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+
+    Text(
+      "Resumen de Flotas",
+      style = MaterialTheme.typography.titleLarge,
+      fontWeight = FontWeight.Bold,
+      color = FlotaTextDark
+    )
+
+    FleetCard(
+      title = "Flota Primaria",
+      vehicles = summary.primaryFleetVehicles,
+      efficiency = summary.primaryFleetEfficiency,
+      trend = summary.primaryFleetTrend
+    )
+
+    FleetCard(
+      title = "Flota Secundaria",
+      vehicles = summary.secondaryFleetVehicles,
+      efficiency = summary.secondaryFleetEfficiency,
+      trend = summary.secondaryFleetTrend
+    )
+
+    FleetCard(
+      title = "Flota Externa",
+      vehicles = summary.externalFleetVehicles,
+      efficiency = summary.externalFleetEfficiency,
+      trend = summary.externalFleetTrend
+    )
+
+    Spacer(Modifier.height(8.dp))
+
+    Card(
+      colors = CardDefaults.cardColors(containerColor = FlotaBgLight),
+      shape = RoundedCornerShape(14.dp),
+      modifier = Modifier.fillMaxWidth()
+    ) {
+      Column(Modifier.padding(16.dp)) {
+        Text(
+          "Eficiencia General",
+          style = MaterialTheme.typography.titleMedium,
+          fontWeight = FontWeight.Bold
+        )
+        Text("${summary.overallEfficiency} %")
+      }
+    }
+  }
+}
+
+@Composable
+fun FleetCard(
+  title: String,
+  vehicles: Int,
+  efficiency: Double,
+  trend: String?
+) {
+  Card(
+    shape = RoundedCornerShape(16.dp),
+    colors = CardDefaults.cardColors(containerColor = FlotaBgLight),
+    modifier = Modifier.fillMaxWidth()
+  ) {
+    Column(Modifier.padding(16.dp)) {
+      Text(
+        title,
+        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.titleMedium
+      )
+      Text("Vehículos: $vehicles")
+      Text("Eficiencia: $efficiency%")
+
+      val trendText = when (trend) {
+        "improving" -> "Mejorando"
+        "stable" -> "Estable"
+        "needs_improvement" -> "Necesita mejora"
+        else -> trend
+      }
+
+      val trendColor = when (trend) {
+        "improving" -> FlotaSuccess
+        "stable" -> FlotaWarning
+        "needs_improvement" -> FlotaError
+        else -> FlotaGrayMid
+      }
+
+      Text(
+        "Tendencia: $trendText",
+        color = trendColor,
+        fontWeight = FontWeight.SemiBold
       )
     }
   }
