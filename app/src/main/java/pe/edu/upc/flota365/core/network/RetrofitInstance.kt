@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
-  private const val BASE_URL = "http://flota365-backend-corp-cmawf5ddamh5f7b8.westus3-01.azurewebsites.net/"
+  private const val BASE_URL = "https://flota365-backend-corp-cmawf5ddamh5f7b8.westus3-01.azurewebsites.net/api/"
 
   val api: Retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)

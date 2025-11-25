@@ -58,7 +58,7 @@ object AppModule {
   @Singleton
   fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit =
     Retrofit.Builder()
-      .baseUrl("https://underground-tuesday-renworkplace-1e2821cb.koyeb.app/api/")
+      .baseUrl("https://flota365-backend-corp-cmawf5ddamh5f7b8.westus3-01.azurewebsites.net/api/")
       .client(okHttpClient)
       .addConverterFactory(GsonConverterFactory.create(gson))
       .build()
